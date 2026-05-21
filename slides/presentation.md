@@ -56,7 +56,7 @@ This is not a bug — it is how LLMs work. But OpenClaw gives you knobs to contr
 | Gemini 2.5 Flash | ~$24 / month |
 | GPT-OSS-120B | ~$2 / month |
 
-**Most of that is overhead — not actual work.**
+**Most of that is overhead, not actual work.**
 
 <!-- SPEAKER NOTES
 These numbers come from real usage patterns measured for a typical daily developer workflow.
@@ -124,9 +124,7 @@ Two key settings here: skip re-injection on follow-up turns, and prune old tool 
 
 # A.1 · Skip Re-Injection
 
-> **Stop re-sending your workspace files on every message.**
-
-Non-tech version: Like reading your company handbook before every Slack reply. Once is enough.
+> Like reading your company handbook before every Slack reply. Once is enough.
 
 ```json
 {
@@ -158,9 +156,7 @@ Impact is dramatic: on a typical 20-turn conversation with 10,000 tokens of work
 
 # A.2 · Prune Old Results
 
-> **Clean up processed tool outputs after a set time.**
-
-Non-tech version: Shred documents after you have read and filed them — do not let them pile up on your desk.
+> Shred documents after you have read and filed them, do not let them pile up on your desk.
 
 ```json
 {
@@ -211,9 +207,7 @@ Two critical scenarios here: what happens when the context window fills up and g
 
 # B.1 · Save Before You Forget
 
-> **Write important notes to disk before the context gets summarized.**
-
-Non-tech version: Taking notes before the meeting ends — before someone erases the whiteboard.
+> Taking notes before the meeting ends, before someone erases the whiteboard.
 
 ```json
 {
@@ -227,7 +221,7 @@ Non-tech version: Taking notes before the meeting ends — before someone erases
 }
 ```
 
-Uses a **free local model** — costs $0.
+Uses a **free local model**, costs $0.
 
 [compaction.memoryFlush](https://docs.openclaw.ai/gateway/configuration)
 
@@ -249,9 +243,7 @@ Requires OpenClaw v2026.2.23 or later for the compaction bug fixes.
 
 # B.2 · Smarter Memory Recall
 
-> **Find what you saved, even when you remember it differently.**
-
-Non-tech version: The difference between `Ctrl+F` and a librarian who understands context.
+> The difference between `Ctrl+F` and a librarian who understands context.
 
 ```json
 {
@@ -305,9 +297,7 @@ Two settings here: prompt caching to avoid re-processing, and a fallback chain t
 
 # C.1 · Cache the System Prompt
 
-> **Tell the AI provider to cache your prompt — pay for it once.**
-
-Non-tech version: A teacher reads the class rules once. Not before every student question.
+> A teacher reads the class rules once, not before every student question.
 
 ```json
 {
@@ -341,9 +331,7 @@ The config merge order is: defaults → per-model overrides → per-agent overri
 
 # C.2 · Always Have a Backup
 
-> **Define a fallback chain — switch models automatically when needed.**
-
-Non-tech version: If your first-choice restaurant is full, you already have a ranked list of backups.
+> If your first-choice restaurant is full, you already have a ranked list of backups.
 
 ```json
 {
@@ -381,7 +369,7 @@ Auto fallback is tracked with modelOverrideSource "auto" so you can see in the l
 
 > **What does the agent do when no one is talking to it?**
 
-By default: wakes up every 30 minutes and runs expensive checks — even at 3am, even when there is nothing to do.
+By default: wakes up every 30 minutes and runs expensive checks, even at 3am, even when there is nothing to do.
 
 <!-- SPEAKER NOTES
 This is the single biggest hidden cost driver in most OpenClaw setups.
@@ -399,9 +387,7 @@ Two settings here: tune the heartbeat to be much lighter, and add a task list so
 
 # D.1 · Wake Up Smarter
 
-> **Restrict when, how often, and how heavily the heartbeat fires.**
-
-Non-tech version: Set an alarm only on workdays — not every 30 minutes around the clock.
+> Set an alarm only on workdays, not every 30 minutes around the clock.
 
 ```json
 {
@@ -444,9 +430,7 @@ Combined, these settings can reduce heartbeat costs by over 95%.
 
 # D.2 · Pay Only When There Is Work
 
-> **Define a task list. Skip the LLM call entirely when nothing is due.**
-
-Non-tech version: A checklist that tells the agent "nothing to do today — go back to sleep."
+> A checklist that tells the agent "nothing to do today, go back to sleep."
 
 ```yaml
 <!-- HEARTBEAT.md -->
@@ -570,7 +554,7 @@ Observe → Record → Improve → Repeat
 - **Improve:** Tune one setting at a time, measure the change
 - **Repeat:** Production optimization is a habit, not a one-time setup
 
-> The configs shown today are a strong starting point — not a final answer.
+> The configs shown today are a strong starting point, not a final answer.
 
 <!-- SPEAKER NOTES
 Optimization is not a one-time event. Your usage patterns change, new models come out, your agent takes on new tasks.
