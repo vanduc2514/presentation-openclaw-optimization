@@ -1,15 +1,25 @@
-# Presentation Template
+# OpenClaw Optimization
 
-A template for building **impress.js presentations** from Markdown — write slides in `.md`, get a self-contained HTML slideshow, and deploy to GitHub Pages automatically.
+**Make Your AI Agent Cheaper, Faster, and Smarter** — using only `openclaw.json`.
 
-Powered by [markpress](https://github.com/davidecaminati/markpress).
+A 25-minute talk for developers and product managers who run OpenClaw and want to cut AI agent costs by 60–80% with zero code changes.
 
-## Use This Template
+## Background
 
-1. Click **Use this template** → **Create a new repository**
-2. Clone your new repository
-3. Install dependencies
-4. Start writing slides
+OpenClaw is free and open-source, but the underlying LLM API calls are not. A typical developer running Claude Opus 4.6 can easily spend $200–$325 per month — most of it on hidden overhead: conversation history re-sent on every turn, workspace files reloaded constantly, and background heartbeat checks firing every 30 minutes around the clock.
+
+This talk walks through 8 high-impact configurations across 4 groups:
+
+| Group | Focus | Configs Covered |
+|---|---|---|
+| A | Context Budget | contextInjection, contextPruning |
+| B | Memory & State | memoryFlush, memorySearch |
+| C | Model Routing | cacheRetention, model fallbacks |
+| D | Heartbeat | heartbeat tuning, HEARTBEAT.md task scheduling |
+
+Every configuration includes a plain-English explanation for non-technical audiences plus a ready-to-use JSON snippet.
+
+## Build
 
 ```sh
 npm install
@@ -23,11 +33,14 @@ Requires Node.js 20. If you use [mise](https://mise.jdx.dev/), run `mise install
 
 ```
 slides/
-  presentation.md     # your slides source — edit this
+  presentation.md     # slide source — edit this
   images/             # images referenced in slides
 build.cjs             # build script — customize theming here
+ideas/
+  openclaw/           # per-group research and reference configs
+  OpenClaw-Optimization-General-Research.md
 package.json
-mise.toml             # Node.js version pin
+mise.toml
 .github/
   workflows/
     deploy-pages.yml  # auto-deploy to GitHub Pages on push to main
@@ -36,20 +49,6 @@ mise.toml             # Node.js version pin
 ```
 
 ## Customizing
-
-### Change the presentation title
-
-Edit the `<!--markpress-opt-->` block at the top of `slides/presentation.md`:
-
-```markdown
-<!--markpress-opt
-{
-  "autoSplit": false,
-  "sanitize": false,
-  "title": "Your Presentation Title"
-}
-markpress-opt-->
-```
 
 ### Colors, fonts, and layout
 
