@@ -100,6 +100,26 @@ We will cover 8 configurations across 4 groups. At the end I will show you the c
 
 ------
 
+<!--slide-attr x=6000 y=1800 rotate=3 scale=1.0 -->
+
+# Context Budget
+
+> What goes into the AI's memory each turn?
+
+Every character in your workspace files = tokens = money.
+
+These settings control the **size of that payload**.
+
+<!-- SPEAKER NOTES
+Think of each AI turn as sending a package. This group controls what goes inside that package.
+
+By default, OpenClaw stuffs in all your workspace files every single time. We can change that.
+
+Two key settings here: skip re-injection on follow-up turns, and prune old tool results after a timeout.
+-->
+
+------
+
 <!--slide-attr x=4000 y=1650 rotate=-2 scale=1.0 -->
 
 # Skip Re-Injection
@@ -161,6 +181,24 @@ contextPruning removes them in-memory before each LLM call. It does not touch yo
 The process: wait for TTL to expire, soft-trim oversized results (keep head and tail, insert "..."), then hard-clear the rest with a placeholder.
 
 With a 1h TTL, any tool result older than an hour gets cleaned up automatically.
+-->
+
+------
+
+<!--slide-attr x=0 y=1800 rotate=-3 scale=1.0 -->
+
+# Memory & State
+
+> What does the agent remember between sessions?
+
+Without good memory: the agent rediscovers the same facts every time.
+
+With good memory: it picks up exactly where it left off.
+
+<!-- SPEAKER NOTES
+This group is about making sure what matters gets preserved.
+
+Two critical scenarios: what happens when the context window fills up and gets summarized (compaction), and how the agent finds things it has stored in memory.
 -->
 
 ------
@@ -235,6 +273,24 @@ This setting auto-detects your API key. If you already have OpenAI configured, i
 
 ------
 
+<!--slide-attr x=4000 y=3750 rotate=3 scale=1.0 -->
+
+# Model Routing
+
+> Which AI model runs for which task?
+
+Not every task needs the most expensive model.
+
+Smart routing uses the right tool for the job, and the right price.
+
+<!-- SPEAKER NOTES
+The key insight: you are probably using one expensive flagship model for everything, including simple background checks that a cheap or free model could handle perfectly well.
+
+Two settings here: prompt caching to avoid re-processing, and a fallback chain that automatically uses cheaper models when the primary is overloaded.
+-->
+
+------
+
 <!--slide-attr x=6000 y=3600 rotate=-2 scale=1.0 -->
 
 # Cache the System Prompt
@@ -301,6 +357,24 @@ For cost: put cheaper models at the bottom of the fallback chain. Off-peak backg
 Important nuance: this applies to configured defaults. If the user explicitly chooses a model with /model command, no fallback is applied — that preserves user intent.
 
 Auto fallback is tracked with modelOverrideSource "auto" so you can see in the logs which model actually ran.
+-->
+
+------
+
+<!--slide-attr x=4000 y=5250 rotate=-3 scale=1.0 -->
+
+# Heartbeat Scheduling
+
+> What does the agent do when no one is talking to it?
+
+By default: wakes up every 30 minutes and runs expensive checks, even at 3am, even when there is nothing to do.
+
+<!-- SPEAKER NOTES
+This is the single biggest hidden cost driver in most OpenClaw setups.
+
+Every heartbeat loads all workspace files and the full conversation history. On a flagship model, that heartbeat alone can cost $30 to $100 per month.
+
+Two settings here: tune the heartbeat to be much lighter, and add a task list so the agent can skip the LLM call entirely when there is nothing to do.
 -->
 
 ------
