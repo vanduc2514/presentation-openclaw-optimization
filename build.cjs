@@ -2,6 +2,28 @@
 
 const fs = require('fs');
 const path = require('path');
+
+// ─────────────────────────────────────────────────────────────────────────────
+// SYNTAX HIGHLIGHTING GUARD
+// Must run before requiring markpress — Node's require() cache ensures the same
+// Highlights instance is used by marky-markdown internally.
+// marky-markdown only ships grammars for a small set of obscure languages.
+// For everything else (json, yaml, markdown…) highlightSync() receives a
+// NullGrammar whose .initialRule is null, causing a hard crash.
+// We wrap it in try/catch so marky-markdown falls back to plain code output,
+// and then highlight.js applies real, coloured syntax highlighting below.
+// ─────────────────────────────────────────────────────────────────────────────
+const Highlights = require('highlights');
+const _origHighlightSync = Highlights.prototype.highlightSync;
+Highlights.prototype.highlightSync = function (opts) {
+  try {
+    return _origHighlightSync.call(this, opts);
+  } catch (e) {
+    return null;
+  }
+};
+
+const hljs = require('highlight.js');
 const markpress = require('markpress');
 
 const INPUT = path.resolve(__dirname, 'slides/presentation.md');
@@ -258,7 +280,51 @@ const customCss = `
       color: var(--ink-dim);
       -webkit-text-fill-color: var(--ink-dim);
     }
+
+    /* ── SYNTAX HIGHLIGHTING (highlight.js — Catppuccin Mocha) ─────────────── */
+    .hljs { color: #cdd6f4; }
+    .hljs-keyword,
+    .hljs-selector-tag { color: #cba6f7; }
+    .hljs-string,
+    .hljs-attr { color: #a6e3a1; }
+    .hljs-number,
+    .hljs-literal { color: #fab387; }
+    .hljs-property,
+    .hljs-built_in { color: #89dceb; }
+    .hljs-comment,
+    .hljs-quote { color: #6c7086; font-style: italic; }
+    .hljs-variable,
+    .hljs-title { color: #89b4fa; }
+    .hljs-punctuation { color: #cdd6f4; }
+    .hljs-type { color: #f9e2af; }
   </style>`;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// POST-PROCESSING: SYNTAX HIGHLIGHTING
+// marky-markdown wraps code blocks as:
+//   <div class="highlight LANG"><pre><code class="highlight LANG">…</code></pre></div>
+// We decode the HTML-escaped content and run it through highlight.js.
+// ─────────────────────────────────────────────────────────────────────────────
+function applyHighlighting(html) {
+  return html.replace(
+    /<div class="highlight ([^"\s]+)"><pre[^>]*><code[^>]*>([\s\S]*?)<\/code><\/pre><\/div>/g,
+    (match, lang, escapedCode) => {
+      if (!lang) return match;
+      const code = escapedCode
+        .replace(/&lt;/g, '<')
+        .replace(/&gt;/g, '>')
+        .replace(/&amp;/g, '&')
+        .replace(/&quot;/g, '"')
+        .replace(/&#39;/g, "'");
+      try {
+        const result = hljs.highlight(code.trim(), { language: lang, ignoreIllegals: true });
+        return `<pre><code class="hljs language-${lang}">${result.value}</code></pre>`;
+      } catch (e) {
+        return `<pre><code class="hljs">${escapedCode}</code></pre>`;
+      }
+    }
+  );
+}
 
 // ─────────────────────────────────────────────────────────────────────────────
 // BUILD
@@ -282,9 +348,7 @@ markpress(INPUT, { theme: false }).then(({ html }) => {
   );
 
   // ── Transform: add here ──────────────────────────────────────────────────
-  // Use the helper functions from the original template or add your own:
-  //   output = wrapStepList(output, 'step-2', 'card-grid', 'card-item');
-  //   output = wrapStepTwoCol(output, 'step-3');
+  output = applyHighlighting(output);
   // ─────────────────────────────────────────────────────────────────────────
 
   const finalHtml = output
