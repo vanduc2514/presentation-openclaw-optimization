@@ -138,7 +138,7 @@ Non-tech version: Like reading your company handbook before every Slack reply. O
 
 On a 20-turn session: eliminates re-injection cost on ~18 of those turns.
 
-`docs.openclaw.ai` → `agents.defaults.contextInjection`
+[agents.defaults.contextInjection](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-contextinjection)
 
 <!-- SPEAKER NOTES
 contextInjection controls when workspace bootstrap files — SOUL.md, AGENTS.md, and friends — get injected into the system prompt.
@@ -173,7 +173,7 @@ Non-tech version: Shred documents after you have read and filed them — do not 
 
 Keeps the context lean during long, multi-hour sessions.
 
-`docs.openclaw.ai` → `agents.defaults.contextPruning`
+[agents.defaults.contextPruning](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-contextpruning)
 
 <!-- SPEAKER NOTES
 When the agent reads a file, browses the web, or runs a shell command, the full output gets stored in the conversation history.
@@ -229,7 +229,7 @@ Non-tech version: Taking notes before the meeting ends — before someone erases
 
 Uses a **free local model** — costs $0.
 
-`docs.openclaw.ai` → `compaction.memoryFlush`
+[compaction.memoryFlush](https://docs.openclaw.ai/gateway/configuration)
 
 <!-- SPEAKER NOTES
 Compaction happens automatically when the context window gets close to the limit. OpenClaw summarizes everything into a condensed form and continues.
@@ -265,7 +265,7 @@ Enables **hybrid search**: keyword matching + vector similarity.
 
 Auto-detects your OpenAI API key. Indexes all `memory/*.md` files.
 
-`docs.openclaw.ai` → `agents.defaults.memorySearch`
+[agents.defaults.memorySearch](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-memorysearch)
 
 <!-- SPEAKER NOTES
 OpenClaw has a built-in SQLite memory engine. By default it uses FTS5 keyword search — fast but literal.
@@ -321,7 +321,7 @@ Non-tech version: A teacher reads the class rules once. Not before every student
 
 Works per-model and per-agent. Three levels: `none`, `short`, `long`.
 
-`docs.openclaw.ai` → `agents.defaults.params.cacheRetention`
+[agents.defaults.params.cacheRetention](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-params-cacheretention)
 
 <!-- SPEAKER NOTES
 Prompt caching is a provider-level feature that OpenClaw exposes as a first-class config key.
@@ -359,7 +359,7 @@ Non-tech version: If your first-choice restaurant is full, you already have a ra
 
 Auto-rotates on rate-limit, overload, or unavailability errors.
 
-`docs.openclaw.ai` → `agents.defaults.model.fallbacks`
+[agents.defaults.model.fallbacks](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-model-fallbacks)
 
 <!-- SPEAKER NOTES
 This serves two purposes: reliability and cost.
@@ -418,7 +418,7 @@ Non-tech version: Set an alarm only on workdays — not every 30 minutes around 
 
 `isolatedSession: true` alone: **~100K tokens → ~2–5K per run.**
 
-`docs.openclaw.ai` → `agents.defaults.heartbeat`
+[agents.defaults.heartbeat](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-heartbeat)
 
 <!-- SPEAKER NOTES
 Let me walk through each flag:
@@ -464,7 +464,7 @@ tasks:
 
 **Zero token cost** when no tasks are due.
 
-`docs.openclaw.ai` → `HEARTBEAT.md` task scheduling
+[HEARTBEAT.md task scheduling](https://docs.openclaw.ai/gateway/configuration)
 
 <!-- SPEAKER NOTES
 This is the sharpest cost lever in the entire heartbeat system.
@@ -594,7 +594,7 @@ Each step builds on the last. After two or three iterations you will have a conf
 
 ### Questions?
 
-`docs.openclaw.ai` · `github.com/openclaw/openclaw`
+[docs.openclaw.ai/gateway/configuration](https://docs.openclaw.ai/gateway/configuration) · [github.com/openclaw/openclaw](https://github.com/openclaw/openclaw)
 
 <!-- SPEAKER NOTES
 Leave plenty of time for questions — this topic always generates good discussion.
