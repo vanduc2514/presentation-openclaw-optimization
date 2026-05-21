@@ -498,9 +498,13 @@ Each step builds on the last. After two or three iterations you will have a conf
 
 # Thank You
 
-### Questions?
+Do you have any Questions ?
 
-[docs.openclaw.ai/gateway/configuration](https://docs.openclaw.ai/gateway/configuration) · [github.com/openclaw/openclaw](https://github.com/openclaw/openclaw)
+Or just want to hang out ?
+
+Feel free to reach me out at
+
+[https://github.com/vanduc2514](https://github.com/vanduc2514)
 
 <!-- SPEAKER NOTES
 Leave plenty of time for questions — this topic always generates good discussion.
