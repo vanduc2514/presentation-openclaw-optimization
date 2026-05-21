@@ -31,6 +31,15 @@ const OUTPUT_DIR = path.resolve(__dirname, 'output');
 const OUTPUT = path.resolve(OUTPUT_DIR, 'index.html');
 
 // ─────────────────────────────────────────────────────────────────────────────
+// REMOTE CONTROL ASSETS
+// Source files read at build time and injected / copied into output/.
+// ─────────────────────────────────────────────────────────────────────────────
+const SRC = path.resolve(__dirname, 'src');
+const REMOTE_CTRL_CSS = fs.readFileSync(path.join(SRC, 'remote-control.css'), 'utf8');
+const REMOTE_CTRL_JS  = fs.readFileSync(path.join(SRC, 'remote-control.js'),  'utf8');
+const REMOTE_HTML     = fs.readFileSync(path.join(SRC, 'remote.html'),        'utf8');
+
+// ─────────────────────────────────────────────────────────────────────────────
 // FONTS
 // Replace with any Google Fonts link. Update font-family in customCss below.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -351,13 +360,22 @@ markpress(INPUT, { theme: false }).then(({ html }) => {
   output = applyHighlighting(output);
   // ─────────────────────────────────────────────────────────────────────────
 
+  // Remote control scripts injected before </body>
+  const remoteScripts =
+    '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>\n' +
+    '<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>\n' +
+    `<script>\n${REMOTE_CTRL_JS}\n</script>`;
+
   const finalHtml = output
     .replace('<head>', `<head>\n${googleFonts}`)
-    .replace('</head>', `${customCss}\n</head>`);
+    .replace('</head>', `${customCss}\n<style id="rc-styles">\n${REMOTE_CTRL_CSS}\n</style>\n</head>`)
+    .replace('</body>', `${remoteScripts}\n</body>`);
 
   fs.mkdirSync(OUTPUT_DIR, { recursive: true });
   fs.writeFileSync(OUTPUT, finalHtml, 'utf8');
+  fs.writeFileSync(path.join(OUTPUT_DIR, 'remote.html'), REMOTE_HTML, 'utf8');
   console.log(`Built: ${OUTPUT}`);
+  console.log(`Built: ${path.join(OUTPUT_DIR, 'remote.html')}`);
 }).catch(err => {
   console.error('Build failed:', err);
   process.exit(1);

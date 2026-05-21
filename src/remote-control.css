@@ -1,0 +1,205 @@
+/* ── REMOTE CONTROL PRESENTER UI ─────────────────────────────────────────── */
+
+#rc-btn {
+  position: fixed;
+  bottom: 1.2rem;
+  right: 1.2rem;
+  z-index: 10000;
+  padding: 0.48rem 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(79, 70, 229, 0.35);
+  background: rgba(24, 24, 37, 0.92);
+  backdrop-filter: blur(12px);
+  color: #a6adc8;
+  font-size: 0.74rem;
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.35);
+}
+#rc-btn:hover {
+  background: rgba(79, 70, 229, 0.9);
+  color: #fff;
+  box-shadow: 0 4px 24px rgba(79, 70, 229, 0.45);
+}
+#rc-btn.rc-active {
+  background: rgba(5, 150, 105, 0.88);
+  border-color: rgba(5, 150, 105, 0.5);
+  color: #fff;
+}
+
+#rc-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  background: rgba(0, 0, 0, 0.65);
+  backdrop-filter: blur(6px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.18s;
+}
+#rc-overlay.rc-open {
+  opacity: 1;
+  pointer-events: all;
+}
+
+#rc-modal {
+  background: #1e1e2e;
+  border: 1px solid #313244;
+  border-radius: 20px;
+  padding: 1.8rem 2rem 2rem;
+  width: min(400px, 88vw);
+  position: relative;
+  color: #cdd6f4;
+  font-family: "Inter", system-ui, sans-serif;
+  box-shadow: 0 30px 90px rgba(0, 0, 0, 0.6);
+}
+
+#rc-modal-title {
+  font-size: 1.05rem;
+  font-weight: 500;
+  margin: 0 0 1.4rem;
+  color: #cdd6f4;
+  letter-spacing: -0.01em;
+}
+
+#rc-close-btn {
+  position: absolute;
+  top: 0.9rem;
+  right: 0.9rem;
+  background: none;
+  border: none;
+  color: #585b70;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 1.8rem;
+  height: 1.8rem;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background 0.15s, color 0.15s;
+}
+#rc-close-btn:hover { background: #313244; color: #cdd6f4; }
+
+#rc-modal label {
+  display: block;
+  font-size: 0.7rem;
+  color: #6c7086;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 500;
+  margin-bottom: 0.4rem;
+}
+
+#rc-pw-input {
+  width: 100%;
+  padding: 0.7rem 0.9rem;
+  border-radius: 10px;
+  border: 1px solid #313244;
+  background: #181825;
+  color: #cdd6f4;
+  font-size: 0.95rem;
+  font-family: "Inter", system-ui, sans-serif;
+  box-sizing: border-box;
+  outline: none;
+  margin-bottom: 1rem;
+}
+#rc-pw-input:focus {
+  border-color: #4f46e5;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.2);
+}
+
+#rc-start-btn {
+  width: 100%;
+  padding: 0.72rem;
+  border-radius: 10px;
+  border: none;
+  background: #4f46e5;
+  color: #fff;
+  font-size: 0.9rem;
+  font-family: "Inter", system-ui, sans-serif;
+  font-weight: 500;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+#rc-start-btn:hover { opacity: 0.85; }
+
+#rc-status {
+  margin: 1.2rem 0 0.6rem;
+  padding: 0.65rem 0.9rem;
+  border-radius: 10px;
+  background: #181825;
+  font-size: 0.82rem;
+  text-align: center;
+  color: #f9e2af;
+}
+#rc-status.rc-connected { color: #a6e3a1; }
+#rc-status.rc-error     { color: #f38ba8; }
+
+#rc-setup-error {
+  color: #f38ba8;
+  font-size: 0.8rem;
+  margin: 0.25rem 0 0.5rem;
+  text-align: center;
+}
+
+#rc-qr-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.8rem;
+  margin: 0.6rem 0 0.8rem;
+}
+#rc-qr-canvas {
+  padding: 8px;
+  background: #fff;
+  border-radius: 12px;
+  line-height: 0;
+}
+
+#rc-url-btn {
+  width: 100%;
+  padding: 0.48rem 0.7rem;
+  background: #181825;
+  border: 1px solid #313244;
+  border-radius: 8px;
+  color: #585b70;
+  font-size: 0.66rem;
+  font-family: "SF Mono", "Fira Code", monospace;
+  cursor: pointer;
+  text-align: left;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  transition: color 0.15s, border-color 0.15s;
+}
+#rc-url-btn:hover { color: #cba6f7; border-color: #4f46e5; }
+
+#rc-count {
+  font-size: 0.78rem;
+  color: #6c7086;
+  text-align: center;
+  margin-bottom: 0.8rem;
+}
+
+#rc-stop-btn {
+  width: 100%;
+  padding: 0.6rem;
+  border-radius: 10px;
+  border: 1px solid rgba(243, 139, 168, 0.25);
+  background: transparent;
+  color: #f38ba8;
+  font-size: 0.82rem;
+  font-family: "Inter", system-ui, sans-serif;
+  cursor: pointer;
+  transition: background 0.15s;
+}
+#rc-stop-btn:hover { background: rgba(243, 139, 168, 0.08); }
