@@ -100,7 +100,7 @@ const customCss = `
     .step {
       width: min(1160px, 84vw);
       min-height: min(680px, 75vh);
-      padding: 3.6rem 4.2rem;
+      padding: 2.8rem 3.2rem;
       box-sizing: border-box;
       border: 1px solid var(--line);
       border-top: var(--border-accent-width) solid var(--group-accent);
@@ -111,6 +111,9 @@ const customCss = `
       display: flex;
       flex-direction: column;
       justify-content: center;
+      gap: 0.2rem;
+      overflow-x: hidden;
+      overflow-y: auto;
     }
 
     .step.active {
@@ -136,13 +139,13 @@ const customCss = `
     }
 
     .step h1 {
-      font-size: clamp(2.6rem, 5.2vmin, 5.2rem);
+      font-size: clamp(2.35rem, 4.9vmin, 4.8rem);
       font-weight: 700;
       max-width: 820px;
     }
 
     .step h2 {
-      font-size: clamp(1.1rem, 2.1vmin, 1.85rem);
+      font-size: clamp(1.05rem, 2.0vmin, 1.6rem);
       color: var(--ink-dim);
       font-weight: 400;
       letter-spacing: -0.01em;
@@ -163,8 +166,8 @@ const customCss = `
     .step td,
     .step th,
     .step blockquote {
-      font-size: clamp(1.05rem, 2.0vmin, 1.6rem);
-      line-height: 1.55;
+      font-size: clamp(1rem, 1.65vmin, 1.3rem);
+      line-height: 1.45;
       color: var(--ink);
       font-weight: 400;
     }
@@ -176,7 +179,7 @@ const customCss = `
     }
 
     .step li {
-      margin: 0.65rem 0;
+      margin: 0.45rem 0;
       padding-left: 0.3rem;
     }
 
@@ -203,7 +206,7 @@ const customCss = `
     }
 
     .step pre {
-      padding: 1.2rem 1.4rem;
+      padding: 0.95rem 1.1rem;
       border-radius: 18px;
       border: 1px solid #e4e4e7;
       background: #f8fafc;
@@ -289,15 +292,34 @@ const customCss = `
     /* ── RESPONSIVE ─────────────────────────────────────────────────────────*/
     @media (max-width: 900px) {
       .step {
-        width: 88vw;
+        width: 90vw;
         min-height: 72vh;
         padding: 2rem 1.8rem;
         border-radius: 16px;
         justify-content: flex-start;
+        overflow-y: auto;
+      }
+
+      .step h1 {
+        font-size: clamp(1.8rem, 4.6vmin, 2.6rem);
+        line-height: 1.12;
+      }
+
+      .step h2 {
+        font-size: clamp(0.9rem, 2.25vmin, 1.15rem);
+      }
+
+      .step p,
+      .step li,
+      .step td,
+      .step th,
+      .step blockquote {
+        font-size: clamp(0.9rem, 2.1vmin, 1.08rem);
+        line-height: 1.38;
       }
 
       .step pre {
-        padding: 0.8rem 1rem;
+        padding: 0.62rem 0.8rem;
         border-radius: 12px;
         max-width: 100%;
         min-width: 0;
