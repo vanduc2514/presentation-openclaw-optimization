@@ -396,8 +396,8 @@ const langSwitcherEn = `
       top: 14px;
       right: 18px;
       z-index: 9999;
-      background: #18181b;
-      border: 1px solid #27272a;
+      background: #ffffff;
+      border: 1px solid #e4e4e7;
       border-radius: 999px;
       padding: 6px 14px;
       font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
@@ -405,12 +405,12 @@ const langSwitcherEn = `
       font-weight: 500;
       color: #f97316;
       text-decoration: none;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       transition: background 150ms, box-shadow 150ms;
     }
     #lang-switcher:hover {
-      background: #27272a;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      background: #f8fafc;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
   </style>`;
 
@@ -422,8 +422,8 @@ const langSwitcherVi = `
       top: 14px;
       right: 18px;
       z-index: 9999;
-      background: #18181b;
-      border: 1px solid #27272a;
+      background: #ffffff;
+      border: 1px solid #e4e4e7;
       border-radius: 999px;
       padding: 6px 14px;
       font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
@@ -431,12 +431,12 @@ const langSwitcherVi = `
       font-weight: 500;
       color: #f97316;
       text-decoration: none;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       transition: background 150ms, box-shadow 150ms;
     }
     #lang-switcher:hover {
-      background: #27272a;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+      background: #f8fafc;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
   </style>`;
 
