@@ -207,6 +207,11 @@ const customCss = `
       border-radius: 18px;
       border: 1px solid #e4e4e7;
       background: #f8fafc;
+      overflow-x: auto;
+      -webkit-overflow-scrolling: touch;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
     }
 
     .step pre code {
@@ -289,6 +294,21 @@ const customCss = `
         padding: 2rem 1.8rem;
         border-radius: 16px;
         justify-content: flex-start;
+      }
+
+      .step pre {
+        padding: 0.8rem 1rem;
+        border-radius: 12px;
+        max-width: 100%;
+        min-width: 0;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+      }
+
+      .step pre code {
+        font-size: clamp(0.7rem, 1.9vmin, 0.95rem);
+        white-space: pre;
+        word-break: normal;
       }
     }
 

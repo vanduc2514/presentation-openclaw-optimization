@@ -464,25 +464,32 @@ Combined with D.1, you go from heartbeat costing $30-$100/month to a few dollars
 
 # The Complete `openclaw.json`
 
-```json
+```jsonc
 {
   "agents": {
     "defaults": {
+      // -- Group A: Context Budget --
       "contextInjection": "continuation-skip",
       "bootstrapMaxChars": 12000,
       "bootstrapTotalMaxChars": 60000,
       "contextPruning": { "mode": "cache-ttl", "ttl": "1h" },
+
+      // -- Group C: Model Routing --
       "model": {
         "primary": "anthropic/claude-sonnet-4-6",
         "fallbacks": ["openai/gpt-oss-120b", "google/gemini-2.5-flash"]
       },
       "params": { "cacheRetention": "long" },
+
+      // -- Group D: Heartbeat --
       "heartbeat": {
         "every": "55m", "lightContext": true,
         "isolatedSession": true, "skipWhenBusy": true,
         "activeHours": { "start": "08:00", "end": "22:00" },
         "model": "ollama/llama3.2:1b"
       },
+
+      // -- Group B: Memory & State --
       "compaction": {
         "memoryFlush": {
           "enabled": true,
