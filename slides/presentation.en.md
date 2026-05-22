@@ -363,7 +363,11 @@ You can override this per-model or per-agent. For example, disable it for agents
 
 > What does the agent do when no one is talking to it?
 
-By default: every 30 minutes the AI "wakes up" to run tasks in HEARTBEAT.md, even when there is nothing to do.
+**By default:**
+
+- Every 30 minutes the AI "wakes up" to run tasks in `HEARTBEAT.md`
+- `HEARTBEAT.md` contains the tasks such as clean up, email check, workspace check
+- This is the feature that make Agent "alive"
 
 <!-- SPEAKER NOTES
 This is the single biggest hidden cost driver in most OpenClaw setups.

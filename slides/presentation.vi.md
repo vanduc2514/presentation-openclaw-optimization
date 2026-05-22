@@ -349,7 +349,11 @@ Bạn có thể ghi đè cài đặt này theo từng model hoặc từng agent.
 
 > Agent sẽ làm gì khi không có ai trò chuyện với nó?
 
-Mặc định: Cứ 30 phút AI lại "thức dậy" một lần để chạy các tác vụ trong HEARTBEAT.md, kể cả khi chẳng có việc gì để làm.
+**Mặc định:**
+
+- Cứ 30 phút AI lại "thức dậy" chạy các tác vụ trong `HEARTBEAT.md`
+- `HEARTBEAT.md` chứa các tác vụ như dọn dẹp, kiểm tra email, kiểm tra thư mục
+- Đây là chức năng khiến Agent "có sự sống"
 
 <!-- SPEAKER NOTES
 Đây là yếu tố chi phí ẩn lớn nhất trong hầu hết các cài đặt OpenClaw.
