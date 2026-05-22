@@ -303,7 +303,6 @@ const customCss = `
       font-weight: 700;
       letter-spacing: -0.04em;
       line-height: 1.08;
-      color: var(--ink);
     }
 
     #step-1 h2 {

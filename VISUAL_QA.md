@@ -65,6 +65,7 @@
 - Hover: Background `#27272a`, shadow enhancement
 
 ### Slides Tested
+Representative sample of slide types:
 1. ✅ Title slide — solid headline
 2. ✅ Bullet point slide — list markers
 3. ✅ Data table — pricing/model comparison
