@@ -1,0 +1,7 @@
+flowchart TB
+  A["Tối ưu nhịp tim (Hearbeat)"] --> B["Tối ưu ngữ cảnh (Context)"]
+  B --> C["Tối ưu trí nhớ (Memory)"]
+  C --> D["Tối ưu model (LLM)"]
+
+  classDef prio fill:#ecfccb,stroke:#65a30d,stroke-width:2px,color:#1f2937;
+  class A,B,C,D prio;

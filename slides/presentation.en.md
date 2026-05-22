@@ -9,9 +9,9 @@ markpress-opt-->
 <!--slide-attr x=0 y=0 scale=1.2 -->
 
 # OpenClaw Optimization
-## Make Your AI Agent Cheaper, Faster, and Smarter
+## The Secret to Making Your AI Agent Cheaper, Faster, and Smarter
 
-Using only `openclaw.json`
+By changing `openclaw.json`
 
 <!-- SPEAKER NOTES
 Welcome everyone. Today we are talking about a practical, hands-on topic: how to optimize an AI agent running on OpenClaw so it costs less, runs faster, and stays reliable.
@@ -31,7 +31,7 @@ Introduce yourself briefly. Mention your experience running OpenClaw in producti
 - Background checks fire every **30 minutes by default**
 - Workspace files reload on **every single turn**
 
-> By turn 20, you are paying for turns 1 through 19 all over again.
+> OpenClaw defaults are designed to keep things working well under ideal cost conditions.
 
 <!-- SPEAKER NOTES
 This is the root cause of almost every surprise bill.
@@ -48,6 +48,8 @@ This is not a bug — it is how LLMs work. But OpenClaw gives you knobs to contr
 <!--slide-attr x=4000 y=150 rotate=2 scale=1.0 -->
 
 # What This Actually Costs
+
+> **Cost** = **Token count** x **Model price**
 
 | Model | Estimated Monthly Cost |
 |---|---|
@@ -72,9 +74,9 @@ Point to the GPT-OSS-120B row — this is what smart routing and optimization ca
 
 <!--slide-attr x=6000 y=-100 rotate=-1 scale=1.1 -->
 
-# `openclaw.json` — Your Control Panel
+# Master `openclaw.json`
 
-One file at `~/.openclaw/openclaw.json`
+> Changing default values in this file can **cut costs by 60-80%**.
 
 ```json
 {
@@ -85,10 +87,6 @@ One file at `~/.openclaw/openclaw.json`
   }
 }
 ```
-
-Change a few settings here. **Cut costs 60–80%.** No code changes needed.
-
-> All configs shown today live inside this single file.
 
 <!-- SPEAKER NOTES
 This is the key message: everything we are about to discuss lives in one JSON file on your machine.
@@ -102,13 +100,13 @@ We will cover 8 configurations across 4 groups. At the end I will show you the c
 
 <!--slide-attr x=6000 y=1800 rotate=3 scale=1.0 -->
 
-# Context Budget
+# Context Optimization
 
-> What goes into the AI's memory each turn?
+> What exactly gets loaded into the AI's memory on each task?
 
-Every character in your workspace files = tokens = money.
+Every character in your context increases token usage.
 
-These settings control the **size of that payload**.
+These settings let you control the **size of that context payload**.
 
 <!-- SPEAKER NOTES
 Think of each AI turn as sending a package. This group controls what goes inside that package.
@@ -122,9 +120,9 @@ Two key settings here: skip re-injection on follow-up turns, and prune old tool 
 
 <!--slide-attr x=4000 y=1650 rotate=-2 scale=1.0 -->
 
-# Skip Re-Injection
+# Reduce Context Repetition
 
-> Like reading your company handbook before every Slack reply. Once is enough.
+> By default, old context gets repeated on each new task.
 
 ```json
 {
@@ -134,7 +132,7 @@ Two key settings here: skip re-injection on follow-up turns, and prune old tool 
 }
 ```
 
-On a 20-turn session: eliminates re-injection cost on ~18 of those turns.
+In a 20-turn session: by around turn 18, repeated context no longer gets re-injected.
 
 [agents.defaults.contextInjection](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-contextinjection)
 
@@ -154,9 +152,9 @@ Impact is dramatic: on a typical 20-turn conversation with 10,000 tokens of work
 
 <!--slide-attr x=2000 y=1950 rotate=2 scale=1.0 -->
 
-# Prune Old Results
+# Clean Up Tool Outputs
 
-> Shred documents after you have read and filed them, do not let them pile up on your desk.
+> Once a tool run is done, do not keep its output around for too long.
 
 ```json
 {
@@ -167,7 +165,7 @@ Impact is dramatic: on a typical 20-turn conversation with 10,000 tokens of work
 }
 ```
 
-Keeps the context lean during long, multi-hour sessions.
+Removes prior tool inputs/outputs from context to reduce wasted tokens.
 
 [agents.defaults.contextPruning](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-contextpruning)
 
@@ -187,13 +185,16 @@ With a 1h TTL, any tool result older than an hour gets cleaned up automatically.
 
 <!--slide-attr x=0 y=1800 rotate=-3 scale=1.0 -->
 
-# Memory & State
+# Memory Optimization
 
-> What does the agent remember between sessions?
+> What can the agent remember across work sessions?
 
-Without good memory: the agent rediscovers the same facts every time.
+**Without good memory:**
+- The AI forgets what it was taught when work starts.
+- The AI must rediscover and retry, increasing token usage and request count.
 
-With good memory: it picks up exactly where it left off.
+**With good memory:**
+- The AI recalls what it learned before starting work.
 
 <!-- SPEAKER NOTES
 This group is about making sure what matters gets preserved.
@@ -205,9 +206,9 @@ Two critical scenarios: what happens when the context window fills up and gets s
 
 <!--slide-attr x=0 y=3600 rotate=2 scale=1.0 -->
 
-# Save Before You Forget
+# Save Memory Before Context Fills Up
 
-> Taking notes before the meeting ends, before someone erases the whiteboard.
+> Save critical information before summarizing the current context.
 
 ```json
 {
@@ -221,9 +222,9 @@ Two critical scenarios: what happens when the context window fills up and gets s
 }
 ```
 
-Uses a **free local model**, costs $0.
+Use a **free local model** here to keep this cost as low as possible.
 
-[compaction.memoryFlush](https://docs.openclaw.ai/gateway/configuration)
+[compaction.memoryFlush](https://docs.openclaw.ai/concepts/compaction#memory-flush)
 
 <!-- SPEAKER NOTES
 Compaction happens automatically when the context window gets close to the limit. OpenClaw summarizes everything into a condensed form and continues.
@@ -253,11 +254,11 @@ Requires OpenClaw v2026.2.23 or later for the compaction bug fixes.
 }
 ```
 
-Enables **hybrid search**: keyword matching + vector similarity.
+Enables **hybrid search**: keyword matching + semantic search (vector similarity).
 
-Auto-detects your OpenAI API key. Indexes all `memory/*.md` files.
+Allows natural-language search so the AI can retrieve information more accurately.
 
-[agents.defaults.memorySearch](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-memorysearch)
+[agents.defaults.memorySearch](https://docs.openclaw.ai/concepts/memory-search)
 
 <!-- SPEAKER NOTES
 OpenClaw has a built-in SQLite memory engine. By default it uses FTS5 keyword search — fast but literal.
@@ -275,52 +276,14 @@ This setting auto-detects your API key. If you already have OpenAI configured, i
 
 <!--slide-attr x=4000 y=3750 rotate=3 scale=1.0 -->
 
-# Model Routing
+# Optimize LLM Routing
 
-> Which AI model runs for which task?
-
-Not every task needs the most expensive model.
-
-Smart routing uses the right tool for the job, and the right price.
+> Use the AI's "brain" more efficiently.
 
 <!-- SPEAKER NOTES
 The key insight: you are probably using one expensive flagship model for everything, including simple background checks that a cheap or free model could handle perfectly well.
 
-Two settings here: prompt caching to avoid re-processing, and a fallback chain that automatically uses cheaper models when the primary is overloaded.
--->
-
-------
-
-<!--slide-attr x=6000 y=3600 rotate=-2 scale=1.0 -->
-
-# Cache the System Prompt
-
-> A teacher reads the class rules once, not before every student question.
-
-```json
-{
-  "params": {
-    "cacheRetention": "long"
-  }
-}
-```
-
-**Up to 90% discount** on cached tokens with Anthropic.
-
-Works per-model and per-agent. Three levels: `none`, `short`, `long`.
-
-[agents.defaults.params.cacheRetention](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-params-cacheretention)
-
-<!-- SPEAKER NOTES
-Prompt caching is a provider-level feature that OpenClaw exposes as a first-class config key.
-
-When you set cacheRetention to "long", OpenClaw tells the provider to keep your system prompt in a cache. Subsequent turns that share the same prefix pay a fraction of the normal input token price.
-
-Anthropic offers up to 90% discount on cached tokens. On a 10,000-token system prompt that gets re-sent 50 times a day, this is significant savings.
-
-You can override this per-model or per-agent. For example, disable it for agents where the system prompt varies on every run — like a dynamic alert agent.
-
-The config merge order is: defaults → per-model overrides → per-agent overrides.
+Two settings here: fallback for reliability and prompt caching to reduce repeated token cost.
 -->
 
 ------
@@ -345,7 +308,7 @@ The config merge order is: defaults → per-model overrides → per-agent overri
 
 Auto-rotates on rate-limit, overload, or unavailability errors.
 
-[agents.defaults.model.fallbacks](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-model-fallbacks)
+[agents.defaults.model.fallbacks](https://docs.openclaw.ai/concepts/model-failover#model-fallback)
 
 <!-- SPEAKER NOTES
 This serves two purposes: reliability and cost.
@@ -361,13 +324,46 @@ Auto fallback is tracked with modelOverrideSource "auto" so you can see in the l
 
 ------
 
+<!--slide-attr x=6000 y=3600 rotate=-2 scale=1.0 -->
+
+# Cache the System Prompt
+
+> A teacher reads the class rules once, not before every student question.
+
+```json
+{
+  "params": {
+    "cacheRetention": "long"
+  }
+}
+```
+
+- **Faster token generation** because repeated tokens do not need to be recomputed.
+- **Up to 90% cost reduction** for cached tokens on Anthropic.
+
+Works per-model and per-agent. Three levels: `none`, `short`, `long` depending on how long you want to retain cached tokens.
+
+[agents.defaults.params.cacheRetention](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-params-cacheretention)
+
+<!-- SPEAKER NOTES
+Prompt caching is a provider-level feature that OpenClaw exposes as a first-class config key.
+
+When you set cacheRetention to "long", OpenClaw tells the provider to keep your system prompt in a cache. Subsequent turns that share the same prefix pay a fraction of the normal input token price.
+
+Anthropic offers up to 90% discount on cached tokens. On a 10,000-token system prompt that gets re-sent 50 times a day, this is significant savings.
+
+You can override this per-model or per-agent. For example, disable it for agents where the system prompt varies on every run.
+-->
+
+------
+
 <!--slide-attr x=4000 y=5250 rotate=-3 scale=1.0 -->
 
-# Heartbeat Scheduling
+# Optimize Periodic Tasks
 
 > What does the agent do when no one is talking to it?
 
-By default: wakes up every 30 minutes and runs expensive checks, even at 3am, even when there is nothing to do.
+By default: every 30 minutes the AI "wakes up" to run tasks in HEARTBEAT.md, even when there is nothing to do.
 
 <!-- SPEAKER NOTES
 This is the single biggest hidden cost driver in most OpenClaw setups.
@@ -381,9 +377,9 @@ Two settings here: tune the heartbeat to be much lighter, and add a task list so
 
 <!--slide-attr x=2000 y=5550 rotate=2 scale=1.0 -->
 
-# Wake Up Smarter
+# Optimize Agent Heartbeat
 
-> Set an alarm only on workdays, not every 30 minutes around the clock.
+> **Cost** = **Heartbeat frequency** x (**Token count** x **Model price**)
 
 ```json
 {
@@ -398,7 +394,7 @@ Two settings here: tune the heartbeat to be much lighter, and add a task list so
 }
 ```
 
-`isolatedSession: true` alone: **~100K tokens → ~2–5K per run.**
+`isolatedSession: true` alone: **~100K tokens -> ~2-5K tokens per run.**
 
 [agents.defaults.heartbeat](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-heartbeat)
 
@@ -426,10 +422,11 @@ Combined, these settings can reduce heartbeat costs by over 95%.
 
 # Pay Only When There Is Work
 
-> A checklist that tells the agent "nothing to do today, go back to sleep."
+> A checklist that tells the agent: "Nothing to do today, go back to sleep."
+
+In `HEARTBEAT.md`:
 
 ```yaml
-<!-- HEARTBEAT.md -->
 tasks:
   - id: inbox-check
     interval: 1h
@@ -444,7 +441,7 @@ tasks:
 
 **Zero token cost** when no tasks are due.
 
-[HEARTBEAT.md task scheduling](https://docs.openclaw.ai/gateway/configuration)
+[HEARTBEAT.md tasks blocks](https://docs.openclaw.ai/gateway/heartbeat#tasks-blocks)
 
 <!-- SPEAKER NOTES
 This is the sharpest cost lever in the entire heartbeat system.
@@ -462,26 +459,25 @@ Combined with D.1, you go from heartbeat costing $30-$100/month to a few dollars
 
 <!--slide-attr x=0 y=7200 rotate=3 scale=0.9 -->
 
-# The Complete `openclaw.json`
+# Optimized `openclaw.json`
+
+Command: `"Update my openclaw.json with this configuration"`
 
 ```jsonc
 {
   "agents": {
     "defaults": {
-      // -- Group A: Context Budget --
       "contextInjection": "continuation-skip",
       "bootstrapMaxChars": 12000,
       "bootstrapTotalMaxChars": 60000,
       "contextPruning": { "mode": "cache-ttl", "ttl": "1h" },
 
-      // -- Group C: Model Routing --
       "model": {
         "primary": "anthropic/claude-sonnet-4-6",
         "fallbacks": ["openai/gpt-oss-120b", "google/gemini-2.5-flash"]
       },
       "params": { "cacheRetention": "long" },
 
-      // -- Group D: Heartbeat --
       "heartbeat": {
         "every": "55m", "lightContext": true,
         "isolatedSession": true, "skipWhenBusy": true,
@@ -489,7 +485,6 @@ Combined with D.1, you go from heartbeat costing $30-$100/month to a few dollars
         "model": "ollama/llama3.2:1b"
       },
 
-      // -- Group B: Memory & State --
       "compaction": {
         "memoryFlush": {
           "enabled": true,
@@ -504,60 +499,34 @@ Combined with D.1, you go from heartbeat costing $30-$100/month to a few dollars
 ```
 
 <!-- SPEAKER NOTES
-Here it is — all 8 configurations combined into one file.
+Here is the complete config with context, memory, model routing, and heartbeat in one place.
 
-This is not aspirational. This is a production-tested config that covers context budget, memory, model routing, and heartbeat in a single place.
-
-You can copy this right now and adapt it to your setup. The only things you might want to change:
-- Swap the primary model to whatever you are currently using
-- Adjust activeHours to match your timezone and work schedule
-- Remove the Ollama references if you are not running local models
-
-Coming up: how to apply this in about 10 seconds.
+Paste it directly into your agent chat and ask it to update `openclaw.json` for you.
 -->
 
 ------
 
-<!--slide-attr x=2000 y=7050 rotate=-2 scale=1.0 -->
+<!--slide-attr x=4000 y=7350 rotate=2 scale=0.92 -->
 
-# How to Apply This Right Now
+# Steps To Optimize Effectively
 
-1. Open a chat with your agent
-2. Paste the config above
-3. Say: `"Update my openclaw.json with this configuration"`
+> Do not optimize before the cost pain appears, and prioritize high-impact changes first.
 
-The agent applies the changes and restarts automatically.
+<div style="display:flex; gap:16px; align-items:stretch; margin: 12px 0 4px;">
+  <div style="flex:1; text-align:center;">
+    <img src="images/optimization-loop.png" alt="Optimization loop: Observe, Evaluate, Improve, Measure" style="height: 220px; width: 100%; object-fit: contain;" />
+    <p><strong>Continuous optimization loop</strong></p>
+  </div>
+  <div style="flex:1; text-align:center;">
+    <img src="images/optimization-priority.png" alt="Top-down optimization priorities" style="height: 220px; width: 100%; object-fit: contain;" />
+    <p><strong>Implementation priority order</strong></p>
+  </div>
+</div>
 
-> No terminal, no file editing, no restart needed.
-
-<!-- SPEAKER NOTES
-This is the point of the whole talk. You do not need to find the file, edit JSON by hand, or restart anything manually.
-
-Just have a conversation. Paste the config. Ask the agent to apply it.
-
-This works because OpenClaw agents can modify their own configuration files — and they know exactly where openclaw.json lives.
-
-If you want to be cautious, ask the agent to show you the diff first before applying. That is a safe way to review what will change.
-
-For production teams: you can version-control your openclaw.json in a private repository and have the agent pull and apply updates on demand.
--->
-
-------
-
-<!--slide-attr x=4000 y=7350 rotate=2 scale=1.0 -->
-
-# Keep Getting Better
-
-```
-Observe → Record → Improve → Repeat
-```
-
-- **Observe:** Check your monthly API cost breakdown
-- **Record:** Note which operations drive the most spend
-- **Improve:** Tune one setting at a time, measure the change
-- **Repeat:** Production optimization is a habit, not a one-time setup
-
-> The configs shown today are a strong starting point, not a final answer.
+- **Observe:** Check model cost and work quality before optimization.
+- **Evaluate:** Evaluate which task is consuming the most budget from logs.
+- **Improve:** Change configuration, then repeat observe and evaluate.
+- **Measure:** Measure cost reduction and work-quality improvement.
 
 <!-- SPEAKER NOTES
 Optimization is not a one-time event. Your usage patterns change, new models come out, your agent takes on new tasks.
@@ -579,11 +548,9 @@ Each step builds on the last. After two or three iterations you will have a conf
 
 # Thank You
 
-Do you have any Questions ?
+Any questions or just want to connect?
 
-Or just want to hang out ?
-
-Feel free to reach me out at
+Please reach out at:
 
 [https://github.com/vanduc2514](https://github.com/vanduc2514)
 
