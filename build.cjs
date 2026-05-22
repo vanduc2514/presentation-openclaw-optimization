@@ -79,6 +79,7 @@ const customCss = `
       --line: #e4e4e7;      /* borders */
       --accent: #f97316;    /* default accent — orange */
       --group-accent: #f97316; /* per-group color, overridden per slide group */
+      --border-accent-width: 5px; /* shared top accent thickness */
       --radius: 20px;       /* slide corner radius */
     }
 
@@ -102,7 +103,7 @@ const customCss = `
       padding: 3.6rem 4.2rem;
       box-sizing: border-box;
       border: 1px solid var(--line);
-      border-top: 5px solid var(--group-accent);
+      border-top: var(--border-accent-width) solid var(--group-accent);
       border-radius: var(--radius);
       background: #ffffff;
       opacity: 0;
@@ -307,7 +308,8 @@ const customCss = `
     #step-1 {
       --group-accent: #f97316;
       background: #fff7ed;
-      border-top-width: 6px;
+      /* Slightly stronger hero treatment on the title slide. */
+      border-top-width: calc(var(--border-accent-width) + 1px);
     }
     #step-1 h1 {
       font-size: clamp(3.2rem, 6.4vmin, 6.4rem);
