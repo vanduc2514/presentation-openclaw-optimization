@@ -91,6 +91,8 @@
 
   /* ── BROADCAST TO ALL REMOTES ─────────────────────────────────────────── */
   function broadcast(data) {
+    /* Prune stale entries on every broadcast so the count stays accurate */
+    connections = connections.filter(function (c) { return c.open; });
     connections.forEach(function (c) { try { c.send(data); } catch (e) {} });
   }
 
@@ -219,7 +221,7 @@
       peer.on('disconnected', function () {
         /* Lost connection to signalling server — try to restore so mobiles
            can still reach the presenter peer without restarting the session. */
-        try { peer.reconnect(); } catch (e) {}
+        try { peer.reconnect(); } catch (e) { console.warn('Failed to reconnect to signalling server:', e); }
       });
 
       peer.on('error', function (err) {
