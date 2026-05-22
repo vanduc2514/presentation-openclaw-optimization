@@ -23,6 +23,6 @@ Every configuration includes a plain-English explanation for non-technical audie
 
 ```sh
 npm install
-npm run build      # → output/index.html
+npm run build      # → output/index.html (Vietnamese, default) and output/index.en.html (English)
 npm run preview    # open in browser
 ```
