@@ -251,7 +251,7 @@ Phần tuyệt vời: bạn có thể trỏ cài đặt này về một mô hìn
 
 Kích hoạt **tìm kiếm kết hợp (hybrid search)**: khớp từ khóa + tìm kiếm ngữ nghĩa (vector similarity).
 
-Tăng hiệu quả tìm kiếm bằng ngôn ngữ tự nhiên, giúp AI tăng độ chính xác khi tìm kiếm nội dung.
+Cho phép tìm kiếm bằng ngôn ngữ tự nhiên, giúp AI truy xuất thông tin chính xác hơn.
 
 [agents.defaults.memorySearch](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-memorysearch)
 
