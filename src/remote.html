@@ -265,70 +265,58 @@
     </div>
   </div>
 
-  <!-- ── PEERJS ─────────────────────────────────────────────────────────── -->
-  <script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>
+  <!-- ── NTFY.SH RELAY ─────────────────────────────────────────────────── -->
   <script>
-  /* global Peer */
   (function () {
     'use strict';
 
-    /* ── ICE / TURN CONFIG ──────────────────────────────────────────────── */
-    var PEER_ICE_CONFIG = {
-      iceServers: [
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' },
-        {
-          urls: [
-            'turn:openrelay.metered.ca:80',
-            'turn:openrelay.metered.ca:443',
-            'turns:openrelay.metered.ca:443'
-          ],
-          username: 'openrelayproject',
-          credential: 'openrelayproject'
-        }
-      ]
-    };
+    /* ── CONFIG ──────────────────────────────────────────────────────────── */
+    var NTFY              = 'https://ntfy.sh';
+    var CMD_DEBOUNCE_MS   = 300;   /* min ms between nav commands to avoid flood */
+    var NO_PRESENTER_TIMEOUT_MS = 10000; /* ms to wait for first slide before giving up */
 
-    /* ── SAME HASH AS PRESENTER ─────────────────────────────────────────── */
-    function toPeerId(password) {
+    /* ── SAME TOPIC DERIVATION AS PRESENTER ────────────────────────────── */
+    function toTopicIds(password) {
       var data = new TextEncoder().encode('openclaw-rc-v1:' + password);
       return crypto.subtle.digest('SHA-256', data).then(function (buf) {
         var hex = Array.from(new Uint8Array(buf))
           .map(function (b) { return b.toString(16).padStart(2, '0'); })
           .join('');
-        return 'ocl-' + hex.slice(0, 20);
+        var base = 'ocl-' + hex.slice(0, 32);
+        return { slide: base + '-s', remote: base + '-r' };
       });
     }
 
-    /* ── ELEMENTS ────────────────────────────────────────────────────────── */
-    var pwInput           = document.getElementById('pw-input');
-    var connectBtn        = document.getElementById('connect-btn');
-    var statusMsg         = document.getElementById('status-msg');
-    var connectScreen     = document.getElementById('connect-screen');
-    var controlScreen     = document.getElementById('control-screen');
-    var slideProgress     = document.getElementById('slide-progress');
-    var slideTitle        = document.getElementById('slide-title');
-    var notesArea         = document.getElementById('notes-area');
-    var progressFill      = document.getElementById('progress-fill');
-    var prevBtn           = document.getElementById('prev-btn');
-    var nextBtn           = document.getElementById('next-btn');
-    var disconnectedBanner= document.getElementById('disconnected-banner');
+    /* ── ELEMENTS ──────────────────────────────────────────────────────── */
+    var pwInput            = document.getElementById('pw-input');
+    var connectBtn         = document.getElementById('connect-btn');
+    var statusMsg          = document.getElementById('status-msg');
+    var connectScreen      = document.getElementById('connect-screen');
+    var controlScreen      = document.getElementById('control-screen');
+    var slideProgress      = document.getElementById('slide-progress');
+    var slideTitle         = document.getElementById('slide-title');
+    var notesArea          = document.getElementById('notes-area');
+    var progressFill       = document.getElementById('progress-fill');
+    var prevBtn            = document.getElementById('prev-btn');
+    var nextBtn            = document.getElementById('next-btn');
+    var disconnectedBanner = document.getElementById('disconnected-banner');
 
-    /* ── STATE ───────────────────────────────────────────────────────────── */
-    var peer          = null;
-    var conn          = null;
-    var savedPw       = '';
-    var reconnectTimer = null;
-    var reconnectDelay = 3000; /* ms, doubles on each failure up to 30 s */
+    /* ── STATE ─────────────────────────────────────────────────────────── */
+    var slideTopic   = null;
+    var remoteTopic  = null;
+    var slideSource  = null;  /* SSE for slide updates */
+    var connected    = false;
+    var lastCmdTime  = 0;     /* debounce nav commands */
+    var noPresenterTimer = null;
 
-    /* ── AUTO-FILL PASSWORD FROM URL ─────────────────────────────────────── */
+    /* ── AUTO-FILL PASSWORD FROM URL ──────────────────────────────────── */
     var urlPw = new URLSearchParams(window.location.search).get('pw');
     if (urlPw) {
       pwInput.value = urlPw;
       setTimeout(function () { connectBtn.click(); }, 400);
     }
 
-    /* ── UPDATE SLIDE UI ─────────────────────────────────────────────────── */
+    /* ── UPDATE SLIDE UI ──────────────────────────────────────────────── */
     function escapeHtml(s) {
       return s.replace(/&/g, '&amp;')
               .replace(/</g, '&lt;')
@@ -360,112 +348,94 @@
       notesArea.scrollTop = 0;
     }
 
-    /* ── SEND COMMAND ────────────────────────────────────────────────────── */
-    function send(data) {
-      if (conn && conn.open) conn.send(data);
+    /* ── PUBLISH COMMAND TO NTFY ─────────────────────────────────────── */
+    function sendCmd(cmd) {
+      /* 300 ms debounce — avoid flooding on rapid taps */
+      var now = Date.now();
+      if (now - lastCmdTime < CMD_DEBOUNCE_MS) return;
+      lastCmdTime = now;
+      if (!remoteTopic) return;
+      fetch(NTFY + '/' + remoteTopic, {
+        method:  'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body:    JSON.stringify({ type: 'cmd', cmd: cmd })
+      }).catch(function () {});
     }
 
-    /* ── CHALLENGE-RESPONSE AUTH HELPER ────────────────────────────────── */
-    function computeResponse(nonce, password) {
-      var data = new TextEncoder().encode(nonce + ':openclaw-rc-auth:' + password);
-      return crypto.subtle.digest('SHA-256', data).then(function (buf) {
-        return Array.from(new Uint8Array(buf))
-          .map(function (b) { return b.toString(16).padStart(2, '0'); })
-          .join('');
-      });
+    /* ── ASK PRESENTER FOR CURRENT SLIDE ─────────────────────────────── */
+    function requestSlide() {
+      if (!remoteTopic) return;
+      fetch(NTFY + '/' + remoteTopic, {
+        method:  'POST',
+        headers: { 'Content-Type': 'text/plain' },
+        body:    JSON.stringify({ type: 'request_slide' })
+      }).catch(function () {});
     }
 
-    /* ── CONNECT ─────────────────────────────────────────────────────────── */
-    /* Returns a Promise<boolean>: true = auth succeeded, false = not yet */
+    /* ── CONNECT ─────────────────────────────────────────────────────── */
     function connect(password) {
-      savedPw = password;
       connectBtn.disabled = true;
-      if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
+      setStatus('Connecting\u2026', '');
 
-      if (peer) { try { peer.destroy(); } catch (e) {} }
+      if (slideSource) { slideSource.close(); slideSource = null; }
+      if (noPresenterTimer) { clearTimeout(noPresenterTimer); noPresenterTimer = null; }
+      connected = false;
 
-      return new Promise(function (resolve) {
-        toPeerId(password).then(function (presenterId) {
-          peer = new Peer({ debug: 0, config: PEER_ICE_CONFIG });
+      toTopicIds(password).then(function (topics) {
+        slideTopic  = topics.slide;
+        remoteTopic = topics.remote;
 
-          peer.on('error', function (err) {
-            if (err.type === 'peer-unavailable') {
-              /* Presenter not online yet — caller will retry */
-              resolve(false);
-            } else {
-              setStatus('Error: ' + (err.message || err.type), 'error');
-              connectBtn.disabled = false;
-              resolve(false);
-            }
-          });
+        /* Subscribe to slide-update topic via SSE */
+        slideSource = new EventSource(NTFY + '/' + slideTopic + '/sse');
 
-        peer.on('open', function () {
-          conn = peer.connect(presenterId, { reliable: true });
+        /* Fired by the browser when the HTTP connection opens */
+        slideSource.onopen = function () {
+          /* Ask presenter for current slide on every (re)connect */
+          requestSlide();
 
-          var authed = false;
-
-          conn.on('open', function () {
+          if (connected) {
+            /* Reconnected after a drop */
             disconnectedBanner.style.display = 'none';
-            setStatus('Waiting for presenter to connect…', '');
-          });
-
-          conn.on('data', function (data) {
-            /* ── Respond to challenge ── */
-            if (data.type === 'challenge') {
-              computeResponse(data.nonce, savedPw).then(function (response) {
-                conn.send({ type: 'auth', response: response });
-              });
-              return;
-            }
-
-            /* ── Session full — another device is already connected ── */
-            if (data.type === 'full') {
-              setStatus('Session is full — another device is already connected.', 'error');
-              connectBtn.disabled = false;
-              resolve(false);
-              return;
-            }
-
-            /* ── First slide packet = authentication succeeded ── */
-            if (data.type === 'slide') {
-              if (!authed) {
-                authed = true;
-                reconnectDelay = 3000; /* reset backoff */
-                setStatus('Presenter connected', 'success');
-                setTimeout(function () {
-                  connectScreen.style.display      = 'none';
-                  controlScreen.style.display      = 'flex';
-                  disconnectedBanner.style.display = 'none';
-                }, 600);
-                resolve(true);
+          } else {
+            /* First connect — if no slide arrives within 10 s, the
+               presenter session is probably not running yet.        */
+            noPresenterTimer = setTimeout(function () {
+              if (!connected) {
+                setStatus('No presenter found \u2014 is the session running?', 'error');
+                connectBtn.disabled = false;
               }
-              updateSlide(data);
-            }
-          });
+            }, NO_PRESENTER_TIMEOUT_MS);
+          }
+        };
 
-          conn.on('close', function () {
-            if (!authed) {
-              /* Closed before slide data arrived = wrong password */
-              setStatus('This presentation is controlled by the presenter. Access denied.', 'error');
-              connectBtn.disabled = false;
-              resolve(false);
-            } else {
-              scheduleReconnect();
-            }
-          });
+        slideSource.addEventListener('message', function (e) {
+          var envelope, data;
+          try { envelope = JSON.parse(e.data); } catch (ex) { return; }
+          if (!envelope || envelope.event !== 'message') return;
+          try { data = JSON.parse(envelope.message); } catch (ex) { return; }
+          if (!data || data.type !== 'slide') return;
 
-          conn.on('error', function () {
-            if (!authed) {
-              setStatus('This presentation is controlled by the presenter. Access denied.', 'error');
-              connectBtn.disabled = false;
-              resolve(false);
-            } else {
-              scheduleReconnect();
-            }
-          });
+          if (!connected) {
+            connected = true;
+            if (noPresenterTimer) { clearTimeout(noPresenterTimer); noPresenterTimer = null; }
+            setStatus('Connected', 'success');
+            setTimeout(function () {
+              connectScreen.style.display      = 'none';
+              controlScreen.style.display      = 'flex';
+              disconnectedBanner.style.display = 'none';
+            }, 400);
+          }
+          updateSlide(data);
         });
+
+        slideSource.onerror = function () {
+          /* SSE auto-reconnects; show banner only after initial auth */
+          if (connected) {
+            disconnectedBanner.textContent   = 'Relay interrupted \u2014 reconnecting\u2026';
+            disconnectedBanner.style.display = 'block';
+          }
+        };
       });
-      }); /* end Promise */
     }
 
     function setStatus(msg, cls) {
@@ -473,46 +443,10 @@
       statusMsg.className   = cls || '';
     }
 
-    /* ── AUTO-RECONNECT ─────────────────────────────────────────────────── */
-    function scheduleReconnect() {
-      if (reconnectTimer) clearTimeout(reconnectTimer);
-      if (!savedPw) return;
-
-      var secs = Math.round(reconnectDelay / 1000);
-      disconnectedBanner.textContent = 'Disconnected — reconnecting in ' + secs + 's…';
-      disconnectedBanner.style.display = 'block';
-
-      /* Countdown display */
-      var remaining = secs;
-      var countdownInterval = setInterval(function () {
-        remaining--;
-        if (remaining > 0) {
-          disconnectedBanner.textContent = 'Disconnected — reconnecting in ' + remaining + 's…';
-        } else {
-          clearInterval(countdownInterval);
-        }
-      }, 1000);
-
-      reconnectTimer = setTimeout(function () {
-        clearInterval(countdownInterval);
-        disconnectedBanner.textContent = 'Reconnecting…';
-        connect(savedPw).then(function (succeeded) {
-          if (succeeded) {
-            reconnectDelay = 3000; /* reset backoff on success */
-          } else {
-            /* Presenter not back yet — back off and try again */
-            reconnectDelay = Math.min(reconnectDelay * 2, 30000);
-            scheduleReconnect();
-          }
-        });
-      }, reconnectDelay);
-    }
-
-    /* ── EVENT LISTENERS ─────────────────────────────────────────────────── */
+    /* ── EVENT LISTENERS ─────────────────────────────────────────────── */
     connectBtn.addEventListener('click', function () {
       var pw = pwInput.value.trim();
       if (!pw) { pwInput.focus(); return; }
-      reconnectDelay = 3000; /* reset backoff for fresh manual connect */
       connect(pw);
     });
 
@@ -520,24 +454,23 @@
       if (e.key === 'Enter') connectBtn.click();
     });
 
-    prevBtn.addEventListener('click', function () { send({ cmd: 'prev' }); });
-    nextBtn.addEventListener('click', function () { send({ cmd: 'next' }); });
+    prevBtn.addEventListener('click', function () { sendCmd('prev'); });
+    nextBtn.addEventListener('click', function () { sendCmd('next'); });
 
-    /* Banner tap cancels the auto-reconnect timer and retries immediately */
+    /* Banner tap: re-send request_slide to refresh state */
     disconnectedBanner.addEventListener('click', function () {
-      if (reconnectTimer) { clearTimeout(reconnectTimer); reconnectTimer = null; }
-      reconnectDelay = 3000;
-      if (savedPw) connect(savedPw);
+      requestSlide();
+      disconnectedBanner.textContent = 'Reconnecting\u2026';
     });
 
-    /* ── KEYBOARD (e.g. Bluetooth clicker when using phone as secondary screen) */
+    /* ── KEYBOARD (Bluetooth clicker or desk keyboard) ────────────────── */
     document.addEventListener('keydown', function (e) {
       if (controlScreen.style.display === 'none') return;
-      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); send({ cmd: 'next' }); }
-      if (e.key === 'ArrowLeft')                   { e.preventDefault(); send({ cmd: 'prev' }); }
+      if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); sendCmd('next'); }
+      if (e.key === 'ArrowLeft')                   { e.preventDefault(); sendCmd('prev'); }
     });
 
-    /* ── SWIPE on nav bar (horizontal = prev/next) ───────────────────────── */
+    /* ── SWIPE on nav bar (horizontal = prev/next) ────────────────────── */
     var swipeStartX = 0;
     var navBar = document.getElementById('nav-bar');
     navBar.addEventListener('touchstart', function (e) {
@@ -545,9 +478,7 @@
     }, { passive: true });
     navBar.addEventListener('touchend', function (e) {
       var dx = e.changedTouches[0].clientX - swipeStartX;
-      if (Math.abs(dx) > 60) {
-        send({ cmd: dx < 0 ? 'next' : 'prev' });
-      }
+      if (Math.abs(dx) > 60) sendCmd(dx < 0 ? 'next' : 'prev');
     }, { passive: true });
 
   }());
