@@ -59,7 +59,7 @@ const REMOTE_BASE_URL = process.env.REMOTE_BASE_URL ||
 const googleFonts = `
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,200..700;1,14..32,200..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,200..700;1,14..32,200..700&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
 `;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -70,24 +70,25 @@ const googleFonts = `
 const customCss = `
   <style>
     /* ── COLOR PALETTE ─────────────────────────────────────────────────────
-       Change these variables to retheme the entire presentation.          */
+       Dark mode with orange accent — matches the GOATVN design system.   */
     :root {
-      --ink: #18181b;       /* body text */
-      --ink-dim: #52525b;   /* subtitles, secondary text */
-      --muted: #a1a1aa;     /* captions, tertiary */
-      --line: #e4e4e7;      /* borders */
-      --accent: #4f46e5;    /* primary highlight */
-      --accent2: #059669;   /* secondary highlight */
-      --radius: 28px;       /* slide corner radius */
+      --ink: #f4f4f5;       /* body text */
+      --ink-dim: #a1a1aa;   /* subtitles, secondary text */
+      --muted: #71717a;     /* captions, tertiary */
+      --line: #27272a;      /* borders */
+      --accent: #f97316;    /* primary highlight — orange */
+      --accent2: #f59e0b;   /* secondary highlight — amber */
+      --accent-dim: #7c3d12; /* darker orange for borders/underlines */
+      --accent-deep: #3d1f08; /* deepest orange tint for slide borders */
+      --radius: 20px;       /* slide corner radius */
     }
 
     /* ── BACKGROUND ────────────────────────────────────────────────────────
-       Keep it a single simple gradient — see markpress-styling SKILL.md
-       for performance rules before adding multiple layers.                */
+       Near-black canvas — single value, no multi-layer gradients.        */
     html, body {
-      background: radial-gradient(#f0ede8, #d8d2c8);
+      background: #09090b;
       color: var(--ink);
-      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+      font-family: "Space Grotesk", "Inter", "Segoe UI", system-ui, sans-serif;
     }
 
     /* ── SLIDE CARD (base .step) ────────────────────────────────────────────
@@ -102,7 +103,7 @@ const customCss = `
       box-sizing: border-box;
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      background: #faf9f7;     /* ← change slide background here */
+      background: #18181b;
       opacity: 0;
       transition: opacity 200ms ease;
       display: flex;
@@ -112,7 +113,7 @@ const customCss = `
 
     .step.active {
       opacity: 1;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
     }
 
     .step > *:first-child {
@@ -124,7 +125,7 @@ const customCss = `
     .step h1,
     .step h2,
     .step h3 {
-      font-family: "Inter", system-ui, sans-serif;
+      font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
       letter-spacing: -0.03em;
       line-height: 1.0;
       color: var(--ink);
@@ -134,7 +135,7 @@ const customCss = `
 
     .step h1 {
       font-size: clamp(2.6rem, 5.2vmin, 5.2rem);
-      font-weight: 300;
+      font-weight: 700;
       max-width: 820px;
     }
 
@@ -150,7 +151,7 @@ const customCss = `
     .step h3 {
       font-size: clamp(0.85rem, 1.6vmin, 1.2rem);
       color: var(--accent);
-      font-weight: 500;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.12em;
     }
@@ -184,7 +185,7 @@ const customCss = `
 
     .step strong {
       color: var(--accent);
-      font-weight: 600;
+      font-weight: 700;
     }
 
     /* ── CODE ───────────────────────────────────────────────────────────────*/
@@ -192,8 +193,8 @@ const customCss = `
       display: inline-block;
       padding: 0.1em 0.52em;
       border-radius: 6px;
-      background: #edeafc;
-      border: 1px solid #c7c3f0;
+      background: #2c1a08;
+      border: 1px solid var(--accent-dim);
       color: var(--accent);
       font-size: 0.88em;
       font-family: "SF Mono", "Fira Code", monospace;
@@ -202,8 +203,8 @@ const customCss = `
     .step pre {
       padding: 1.2rem 1.4rem;
       border-radius: 18px;
-      border: 1px solid var(--line);
-      background: #1e1e2e;
+      border: 1px solid #27272a;
+      background: #0c0c10;
     }
 
     .step pre code {
@@ -211,7 +212,7 @@ const customCss = `
       padding: 0;
       background: transparent;
       border: 0;
-      color: #cdd6f4;
+      color: #e4e4e7;
       border-radius: 0;
     }
 
@@ -221,7 +222,7 @@ const customCss = `
       padding: 1rem 0 1rem 1.4rem;
       border-left: 3px solid var(--accent);
       color: var(--ink-dim);
-      background: #f0effe;
+      background: #1c1208;
       border-radius: 0 12px 12px 0;
     }
 
@@ -233,14 +234,14 @@ const customCss = `
       border-spacing: 0;
       border: 1px solid var(--line);
       border-radius: 20px;
-      background: #ffffff;
+      background: #1c1c1f;
     }
 
     .step thead th {
-      background: #f0effe;
+      background: #231508;
       color: var(--accent);
       font-size: clamp(0.8rem, 1.45vmin, 1.05rem);
-      font-weight: 500;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
@@ -255,6 +256,18 @@ const customCss = `
 
     .step tr:last-child td {
       border-bottom: 0;
+    }
+
+    /* ── LINKS ──────────────────────────────────────────────────────────────*/
+    .step a {
+      color: var(--accent);
+      text-decoration: none;
+      border-bottom: 1px solid var(--accent-dim);
+      transition: border-color 150ms;
+    }
+
+    .step a:hover {
+      border-bottom-color: var(--accent);
     }
 
     /* ── IMAGES ─────────────────────────────────────────────────────────────*/
@@ -272,25 +285,25 @@ const customCss = `
         width: 88vw;
         min-height: 72vh;
         padding: 2rem 1.8rem;
-        border-radius: 20px;
+        border-radius: 16px;
         justify-content: flex-start;
       }
     }
 
     /* ── PER-SLIDE OVERRIDES ────────────────────────────────────────────────
        Use #step-N to override styles for a specific slide (1-indexed).
-       Example: make slide 1 a styled title card.                         */
+       Slide 1: dark title card with orange gradient heading.             */
     #step-1 {
-      background: #f8f7ff;
-      border-color: #d4d0f5;
+      background: #0f0f13;
+      border-color: var(--accent-deep);
     }
 
     #step-1 h1 {
       font-size: clamp(3.2rem, 6.4vmin, 6.4rem);
-      font-weight: 200;
+      font-weight: 700;
       letter-spacing: -0.04em;
       line-height: 1.08;
-      background: linear-gradient(135deg, #18181b 25%, var(--accent) 100%);
+      background: linear-gradient(135deg, #e4e4e7 20%, var(--accent) 100%);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
@@ -303,21 +316,21 @@ const customCss = `
       -webkit-text-fill-color: var(--ink-dim);
     }
 
-    /* ── SYNTAX HIGHLIGHTING (highlight.js — Catppuccin Mocha) ─────────────── */
-    .hljs { color: #cdd6f4; }
+    /* ── SYNTAX HIGHLIGHTING (highlight.js — dark orange theme) ────────────── */
+    .hljs { color: #e4e4e7; }
     .hljs-keyword,
-    .hljs-selector-tag { color: #cba6f7; }
+    .hljs-selector-tag { color: #fb923c; }
     .hljs-string,
-    .hljs-attr { color: #a6e3a1; }
+    .hljs-attr { color: #86efac; }
     .hljs-number,
-    .hljs-literal { color: #fab387; }
+    .hljs-literal { color: #fbbf24; }
     .hljs-property,
-    .hljs-built_in { color: #89dceb; }
+    .hljs-built_in { color: #67e8f9; }
     .hljs-comment,
-    .hljs-quote { color: #6c7086; font-style: italic; }
+    .hljs-quote { color: #52525b; font-style: italic; }
     .hljs-variable,
-    .hljs-title { color: #89b4fa; }
-    .hljs-punctuation { color: #cdd6f4; }
+    .hljs-title { color: #fdba74; }
+    .hljs-punctuation { color: #a1a1aa; }
     .hljs-type { color: #f9e2af; }
   </style>`;
 
@@ -360,21 +373,21 @@ const langSwitcherEn = `
       top: 14px;
       right: 18px;
       z-index: 9999;
-      background: rgba(255,255,255,0.92);
-      border: 1px solid #d4d0f5;
+      background: #18181b;
+      border: 1px solid #27272a;
       border-radius: 999px;
       padding: 6px 14px;
-      font-family: "Inter", system-ui, sans-serif;
+      font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
       font-size: 0.82rem;
       font-weight: 500;
-      color: #4f46e5;
+      color: #f97316;
       text-decoration: none;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
       transition: background 150ms, box-shadow 150ms;
     }
     #lang-switcher:hover {
-      background: #f0effe;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      background: #27272a;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
   </style>`;
 
@@ -386,21 +399,21 @@ const langSwitcherVi = `
       top: 14px;
       right: 18px;
       z-index: 9999;
-      background: rgba(255,255,255,0.92);
-      border: 1px solid #d4d0f5;
+      background: #18181b;
+      border: 1px solid #27272a;
       border-radius: 999px;
       padding: 6px 14px;
-      font-family: "Inter", system-ui, sans-serif;
+      font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
       font-size: 0.82rem;
       font-weight: 500;
-      color: #4f46e5;
+      color: #f97316;
       text-decoration: none;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.4);
       transition: background 150ms, box-shadow 150ms;
     }
     #lang-switcher:hover {
-      background: #f0effe;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+      background: #27272a;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.5);
     }
   </style>`;
 
