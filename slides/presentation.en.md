@@ -552,18 +552,10 @@ Any questions or just want to connect?
 
 Please reach out at:
 
-<div style="display:flex; justify-content:center; margin-top: 10px;">
-  <div style="display:flex; gap:16px;">
-    <div style="text-align:center;">
-      <img src="images/github-qr.png" alt="GitHub QR" style="width: 180px; height: 180px; object-fit: contain; display:block;" />
-      <img src="images/github-icon.svg" alt="GitHub icon" style="width: 36px; height: 36px; margin: 8px auto 0; display:block;" />
-    </div>
-    <div style="text-align:center;">
-      <img src="images/facebook-qr.png" alt="Facebook QR" style="width: 180px; height: 180px; object-fit: contain; display:block;" />
-      <img src="images/facebook-icon.svg" alt="Facebook icon" style="width: 36px; height: 36px; margin: 8px auto 0; display:block;" />
-    </div>
-  </div>
-</div>
+| GitHub | Facebook | Website |
+|---|---|---|
+| ![GitHub QR](images/github-qr.png) | ![Facebook QR](images/facebook-qr.png) | ![Website QR](images/nvduc-qr.png) |
+| ![GitHub icon](images/github-icon.svg) | ![Facebook icon](images/facebook-icon.svg) | ![Website icon](images/website-icon.svg) |
 
 <!-- SPEAKER NOTES
 Leave plenty of time for questions — this topic always generates good discussion.
