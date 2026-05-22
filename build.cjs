@@ -59,7 +59,7 @@ const REMOTE_BASE_URL = process.env.REMOTE_BASE_URL ||
 const googleFonts = `
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,200..700;1,14..32,200..700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,200..700;1,14..32,200..700&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
 `;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -70,39 +70,42 @@ const googleFonts = `
 const customCss = `
   <style>
     /* ── COLOR PALETTE ─────────────────────────────────────────────────────
-       Change these variables to retheme the entire presentation.          */
+       Light mode with per-group accent colors.
+       Each group gets a --group-accent assigned via #step-N overrides.   */
     :root {
       --ink: #18181b;       /* body text */
       --ink-dim: #52525b;   /* subtitles, secondary text */
       --muted: #a1a1aa;     /* captions, tertiary */
       --line: #e4e4e7;      /* borders */
-      --accent: #4f46e5;    /* primary highlight */
-      --accent2: #059669;   /* secondary highlight */
-      --radius: 28px;       /* slide corner radius */
+      --accent: #f97316;    /* default accent — orange */
+      --group-accent: #f97316; /* per-group color, overridden per slide group */
+      --border-accent-width: 5px; /* shared top accent thickness */
+      --radius: 20px;       /* slide corner radius */
     }
 
     /* ── BACKGROUND ────────────────────────────────────────────────────────
-       Keep it a single simple gradient — see markpress-styling SKILL.md
-       for performance rules before adding multiple layers.                */
+       Light gray canvas so white slide cards pop.                        */
     html, body {
-      background: radial-gradient(#f0ede8, #d8d2c8);
+      background: #f1f5f9;
       color: var(--ink);
-      font-family: "Inter", "Segoe UI", system-ui, sans-serif;
+      font-family: "Space Grotesk", "Inter", "Segoe UI", system-ui, sans-serif;
     }
 
     /* ── SLIDE CARD (base .step) ────────────────────────────────────────────
        RULES:
        - background MUST be a fully opaque hex — never rgba()
        - box-shadow belongs on .step.active only — not here
-       - no pseudo-elements (::before / ::after) on .step              */
+       - no pseudo-elements (::before / ::after) on .step
+       - border-top is the primary dynamic accent — set per group          */
     .step {
       width: min(1160px, 84vw);
       min-height: min(680px, 75vh);
       padding: 3.6rem 4.2rem;
       box-sizing: border-box;
       border: 1px solid var(--line);
+      border-top: var(--border-accent-width) solid var(--group-accent);
       border-radius: var(--radius);
-      background: #faf9f7;     /* ← change slide background here */
+      background: #ffffff;
       opacity: 0;
       transition: opacity 200ms ease;
       display: flex;
@@ -112,7 +115,7 @@ const customCss = `
 
     .step.active {
       opacity: 1;
-      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.12), 0 2px 8px rgba(0, 0, 0, 0.06);
+      box-shadow: 0 16px 48px rgba(0, 0, 0, 0.10), 0 2px 8px rgba(0, 0, 0, 0.06);
     }
 
     .step > *:first-child {
@@ -124,7 +127,7 @@ const customCss = `
     .step h1,
     .step h2,
     .step h3 {
-      font-family: "Inter", system-ui, sans-serif;
+      font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
       letter-spacing: -0.03em;
       line-height: 1.0;
       color: var(--ink);
@@ -134,7 +137,7 @@ const customCss = `
 
     .step h1 {
       font-size: clamp(2.6rem, 5.2vmin, 5.2rem);
-      font-weight: 300;
+      font-weight: 700;
       max-width: 820px;
     }
 
@@ -149,8 +152,8 @@ const customCss = `
 
     .step h3 {
       font-size: clamp(0.85rem, 1.6vmin, 1.2rem);
-      color: var(--accent);
-      font-weight: 500;
+      color: var(--group-accent);
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.12em;
     }
@@ -178,13 +181,13 @@ const customCss = `
     }
 
     .step li::marker {
-      color: var(--accent);
+      color: var(--group-accent);
       content: "\u25b8  ";
     }
 
     .step strong {
-      color: var(--accent);
-      font-weight: 600;
+      color: var(--group-accent);
+      font-weight: 700;
     }
 
     /* ── CODE ───────────────────────────────────────────────────────────────*/
@@ -192,9 +195,9 @@ const customCss = `
       display: inline-block;
       padding: 0.1em 0.52em;
       border-radius: 6px;
-      background: #edeafc;
-      border: 1px solid #c7c3f0;
-      color: var(--accent);
+      background: #fafafa;
+      border: 1px solid #e4e4e7;
+      color: #0f172a;
       font-size: 0.88em;
       font-family: "SF Mono", "Fira Code", monospace;
     }
@@ -202,8 +205,8 @@ const customCss = `
     .step pre {
       padding: 1.2rem 1.4rem;
       border-radius: 18px;
-      border: 1px solid var(--line);
-      background: #1e1e2e;
+      border: 1px solid #e4e4e7;
+      background: #f8fafc;
     }
 
     .step pre code {
@@ -211,7 +214,7 @@ const customCss = `
       padding: 0;
       background: transparent;
       border: 0;
-      color: #cdd6f4;
+      color: #18181b;
       border-radius: 0;
     }
 
@@ -219,9 +222,9 @@ const customCss = `
     .step blockquote {
       margin: 1.4rem 0 0;
       padding: 1rem 0 1rem 1.4rem;
-      border-left: 3px solid var(--accent);
+      border-left: 4px solid var(--group-accent);
       color: var(--ink-dim);
-      background: #f0effe;
+      background: #f8fafc;
       border-radius: 0 12px 12px 0;
     }
 
@@ -237,10 +240,10 @@ const customCss = `
     }
 
     .step thead th {
-      background: #f0effe;
-      color: var(--accent);
+      background: #f4f4f5;
+      color: var(--group-accent);
       font-size: clamp(0.8rem, 1.45vmin, 1.05rem);
-      font-weight: 500;
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.1em;
     }
@@ -255,6 +258,18 @@ const customCss = `
 
     .step tr:last-child td {
       border-bottom: 0;
+    }
+
+    /* ── LINKS ──────────────────────────────────────────────────────────────*/
+    .step a {
+      color: var(--group-accent);
+      text-decoration: none;
+      border-bottom: 1px solid #e4e4e7;
+      transition: border-color 150ms;
+    }
+
+    .step a:hover {
+      border-bottom-color: var(--group-accent);
     }
 
     /* ── IMAGES ─────────────────────────────────────────────────────────────*/
@@ -272,53 +287,76 @@ const customCss = `
         width: 88vw;
         min-height: 72vh;
         padding: 2rem 1.8rem;
-        border-radius: 20px;
+        border-radius: 16px;
         justify-content: flex-start;
       }
     }
 
-    /* ── PER-SLIDE OVERRIDES ────────────────────────────────────────────────
-       Use #step-N to override styles for a specific slide (1-indexed).
-       Example: make slide 1 a styled title card.                         */
-    #step-1 {
-      background: #f8f7ff;
-      border-color: #d4d0f5;
-    }
+    /* ── PER-GROUP ACCENT COLORS ────────────────────────────────────────────
+       Groups are assigned a --group-accent color via #step-N.
+       The top border, h3, strong, bullets, and blockquote all pick it up.
 
+       Slide 1      — Title               — Orange    #f97316
+       Slides 2–4   — Problem / Cost      — Red       #ef4444
+       Slides 5–7   — Group A (Context)   — Green     #22c55e
+       Slides 8–10  — Group B (Memory)    — Blue      #3b82f6
+       Slides 11–13 — Group C (Routing)   — Purple    #a855f7
+       Slides 14–16 — Group D (Heartbeat) — Amber     #f59e0b
+       Slides 17–20 — Closing             — Teal      #14b8a6   */
+
+    /* Title */
+    #step-1 {
+      --group-accent: #f97316;
+      background: #fff7ed;
+      /* Slightly stronger hero treatment on the title slide. */
+      border-top-width: calc(var(--border-accent-width) + 1px);
+    }
     #step-1 h1 {
       font-size: clamp(3.2rem, 6.4vmin, 6.4rem);
-      font-weight: 200;
+      font-weight: 700;
       letter-spacing: -0.04em;
       line-height: 1.08;
-      background: linear-gradient(135deg, #18181b 25%, var(--accent) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
     }
-
     #step-1 h2 {
       margin-top: 0.7rem;
       font-weight: 400;
       color: var(--ink-dim);
-      -webkit-text-fill-color: var(--ink-dim);
     }
 
-    /* ── SYNTAX HIGHLIGHTING (highlight.js — Catppuccin Mocha) ─────────────── */
-    .hljs { color: #cdd6f4; }
+    /* Problem / Cost */
+    #step-2, #step-3, #step-4 { --group-accent: #ef4444; }
+
+    /* Group A — Context Budget */
+    #step-5, #step-6, #step-7 { --group-accent: #22c55e; }
+
+    /* Group B — Memory & State */
+    #step-8, #step-9, #step-10 { --group-accent: #3b82f6; }
+
+    /* Group C — Model Routing */
+    #step-11, #step-12, #step-13 { --group-accent: #a855f7; }
+
+    /* Group D — Heartbeat */
+    #step-14, #step-15, #step-16 { --group-accent: #f59e0b; }
+
+    /* Closing */
+    #step-17, #step-18, #step-19, #step-20 { --group-accent: #14b8a6; }
+
+    /* ── SYNTAX HIGHLIGHTING (highlight.js — light theme) ──────────────────── */
+    .hljs { color: #24292e; background: transparent; }
     .hljs-keyword,
-    .hljs-selector-tag { color: #cba6f7; }
+    .hljs-selector-tag { color: #d73a49; font-weight: 600; }
     .hljs-string,
-    .hljs-attr { color: #a6e3a1; }
+    .hljs-attr { color: #032f62; }
     .hljs-number,
-    .hljs-literal { color: #fab387; }
+    .hljs-literal { color: #005cc5; }
     .hljs-property,
-    .hljs-built_in { color: #89dceb; }
+    .hljs-built_in { color: #6f42c1; }
     .hljs-comment,
-    .hljs-quote { color: #6c7086; font-style: italic; }
+    .hljs-quote { color: #6a737d; font-style: italic; }
     .hljs-variable,
-    .hljs-title { color: #89b4fa; }
-    .hljs-punctuation { color: #cdd6f4; }
-    .hljs-type { color: #f9e2af; }
+    .hljs-title { color: #e36209; }
+    .hljs-punctuation { color: #586069; }
+    .hljs-type { color: #005cc5; }
   </style>`;
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -360,20 +398,20 @@ const langSwitcherEn = `
       top: 14px;
       right: 18px;
       z-index: 9999;
-      background: rgba(255,255,255,0.92);
-      border: 1px solid #d4d0f5;
+      background: #ffffff;
+      border: 1px solid #e4e4e7;
       border-radius: 999px;
       padding: 6px 14px;
-      font-family: "Inter", system-ui, sans-serif;
+      font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
       font-size: 0.82rem;
       font-weight: 500;
-      color: #4f46e5;
+      color: #f97316;
       text-decoration: none;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       transition: background 150ms, box-shadow 150ms;
     }
     #lang-switcher:hover {
-      background: #f0effe;
+      background: #f8fafc;
       box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
   </style>`;
@@ -386,20 +424,20 @@ const langSwitcherVi = `
       top: 14px;
       right: 18px;
       z-index: 9999;
-      background: rgba(255,255,255,0.92);
-      border: 1px solid #d4d0f5;
+      background: #ffffff;
+      border: 1px solid #e4e4e7;
       border-radius: 999px;
       padding: 6px 14px;
-      font-family: "Inter", system-ui, sans-serif;
+      font-family: "Space Grotesk", "Inter", system-ui, sans-serif;
       font-size: 0.82rem;
       font-weight: 500;
-      color: #4f46e5;
+      color: #f97316;
       text-decoration: none;
       box-shadow: 0 2px 8px rgba(0,0,0,0.08);
       transition: background 150ms, box-shadow 150ms;
     }
     #lang-switcher:hover {
-      background: #f0effe;
+      background: #f8fafc;
       box-shadow: 0 4px 12px rgba(0,0,0,0.12);
     }
   </style>`;
