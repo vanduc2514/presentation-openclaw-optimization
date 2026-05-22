@@ -382,6 +382,48 @@ const customCss = `
 
     /* Closing */
     #step-17, #step-18, #step-19, #step-20 { --group-accent: #14b8a6; }
+    #step-19, #step-20 { justify-content: center; }
+    #step-19 table, #step-20 table {
+      width: min(100%, 1080px);
+      margin: 1rem auto 0;
+      border: 0;
+      background: transparent;
+      table-layout: fixed;
+      border-spacing: 26px 8px;
+    }
+    #step-19 thead th, #step-20 thead th {
+      background: transparent;
+      color: var(--ink-dim);
+      text-transform: none;
+      letter-spacing: 0;
+      font-weight: 600;
+      font-size: clamp(0.8rem, 1.45vmin, 1rem);
+      text-align: center;
+      border: 0;
+      padding-bottom: 0.2rem;
+    }
+    #step-19 td, #step-20 td {
+      border: 0;
+      text-align: center;
+      width: 33.33%;
+      padding: 0.2rem 0.25rem;
+      background: transparent;
+    }
+    #step-19 tbody tr:nth-child(1) img,
+    #step-20 tbody tr:nth-child(1) img {
+      width: 180px;
+      height: 180px;
+      object-fit: contain;
+      margin: 0 auto;
+    }
+    #step-19 tbody tr:nth-child(2) img,
+    #step-20 tbody tr:nth-child(2) img {
+      width: 36px;
+      height: 36px;
+      object-fit: contain;
+      margin: 6px auto 0;
+      border: 0;
+    }
 
     /* ── SYNTAX HIGHLIGHTING (highlight.js — light theme) ──────────────────── */
     .hljs { color: #24292e; background: transparent; }
