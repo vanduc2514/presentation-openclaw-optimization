@@ -26,9 +26,11 @@ Highlights.prototype.highlightSync = function (opts) {
 const hljs = require('highlight.js');
 const markpress = require('markpress');
 
-const INPUT = path.resolve(__dirname, 'slides/presentation.md');
+const INPUT_EN = path.resolve(__dirname, 'slides/presentation.en.md');
+const INPUT_VI = path.resolve(__dirname, 'slides/presentation.vi.md');
 const OUTPUT_DIR = path.resolve(__dirname, 'output');
-const OUTPUT = path.resolve(OUTPUT_DIR, 'index.html');
+const OUTPUT_EN = path.resolve(OUTPUT_DIR, 'index.html');
+const OUTPUT_VI = path.resolve(OUTPUT_DIR, 'index.vi.html');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // REMOTE CONTROL ASSETS
@@ -336,47 +338,114 @@ function applyHighlighting(html) {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// BUILD
-// Runs markpress, strips its default theme, injects custom CSS + fonts.
-// Add post-processing transforms below the "Transform" comment.
+// LANGUAGE SWITCHER
+// Injected into each output so viewers can switch between EN and VI.
 // ─────────────────────────────────────────────────────────────────────────────
-markpress(INPUT, { theme: false }).then(({ html }) => {
-  // Strip markpress default theme styles
-  let output = html
-    .replace(/<link[^>]+markpress[^>]*>/gi, '')
-    .replace(/<link[^>]+theme[^>]*>/gi, '')
-    .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, (match) => {
-      if (/font-family|line-height|blockquote|pre\s*\{/.test(match)) return '';
-      return match;
-    });
+const langSwitcherEn = `
+  <a id="lang-switcher" href="./index.vi.html" title="Switch to Vietnamese">🇻�� Tiếng Việt</a>
+  <style>
+    #lang-switcher {
+      position: fixed;
+      top: 14px;
+      right: 18px;
+      z-index: 9999;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid #d4d0f5;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-family: "Inter", system-ui, sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #4f46e5;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: background 150ms, box-shadow 150ms;
+    }
+    #lang-switcher:hover {
+      background: #f0effe;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+  </style>`;
 
-  // Smooth camera transition
-  output = output.replace(
-    /(<div[^>]*id=["']impress["'][^>]*)(>)/,
-    '$1 data-transition-duration="200"$2'
-  );
+const langSwitcherVi = `
+  <a id="lang-switcher" href="./index.html" title="Switch to English">🇬🇧 English</a>
+  <style>
+    #lang-switcher {
+      position: fixed;
+      top: 14px;
+      right: 18px;
+      z-index: 9999;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid #d4d0f5;
+      border-radius: 999px;
+      padding: 6px 14px;
+      font-family: "Inter", system-ui, sans-serif;
+      font-size: 0.82rem;
+      font-weight: 500;
+      color: #4f46e5;
+      text-decoration: none;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      transition: background 150ms, box-shadow 150ms;
+    }
+    #lang-switcher:hover {
+      background: #f0effe;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+    }
+  </style>`;
 
-  // ── Transform: add here ──────────────────────────────────────────────────
-  output = applyHighlighting(output);
-  // ─────────────────────────────────────────────────────────────────────────
+// ─────────────────────────────────────────────────────────────────────────────
+// BUILD FUNCTION
+// Builds one markdown source into one HTML output. langSwitcher HTML is
+// injected before </body>. Add post-processing transforms inside this function.
+// ─────────────────────────────────────────────────────────────────────────────
+function buildPresentation(input, output, langSwitcher) {
+  return markpress(input, { theme: false }).then(({ html }) => {
+    // Strip markpress default theme styles
+    let stripped = html
+      .replace(/<link[^>]+markpress[^>]*>/gi, '')
+      .replace(/<link[^>]+theme[^>]*>/gi, '')
+      .replace(/<style[^>]*>[\s\S]*?<\/style>/gi, (match) => {
+        if (/font-family|line-height|blockquote|pre\s*\{/.test(match)) return '';
+        return match;
+      });
 
-  // Remote control scripts injected before </body>
-  const remoteScripts =
-    '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>\n' +
-    '<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>\n' +
-    `<script>\n${REMOTE_CTRL_JS}\n</script>`;
+    // Smooth camera transition
+    stripped = stripped.replace(
+      /(<div[^>]*id=["']impress["'][^>]*)(>)/,
+      '$1 data-transition-duration="200"$2'
+    );
 
-  const finalHtml = output
-    .replace('<head>', `<head>\n${googleFonts}`)
-    .replace('</head>', `${customCss}\n<style id="rc-styles">\n${REMOTE_CTRL_CSS}\n</style>\n</head>`)
-    .replace('</body>', `${remoteScripts}\n</body>`);
+    // ── Transform: add here ────────────────────────────────────────────────
+    stripped = applyHighlighting(stripped);
+    // ──────────────────────────────────────────────────────────────────────
 
-  fs.mkdirSync(OUTPUT_DIR, { recursive: true });
-  fs.writeFileSync(OUTPUT, finalHtml, 'utf8');
-  fs.writeFileSync(path.join(OUTPUT_DIR, 'remote.html'), REMOTE_HTML, 'utf8');
-  console.log(`Built: ${OUTPUT}`);
-  console.log(`Built: ${path.join(OUTPUT_DIR, 'remote.html')}`);
-}).catch(err => {
+    // Remote control scripts injected before </body>
+    const remoteScripts =
+      '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>\n' +
+      '<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>\n' +
+      `<script>\n${REMOTE_CTRL_JS}\n</script>`;
+
+    const finalHtml = stripped
+      .replace('<head>', `<head>\n${googleFonts}`)
+      .replace('</head>', `${customCss}\n<style id="rc-styles">\n${REMOTE_CTRL_CSS}\n</style>\n</head>`)
+      .replace('</body>', `${langSwitcher}\n${remoteScripts}\n</body>`);
+
+    fs.writeFileSync(output, finalHtml, 'utf8');
+    console.log(`Built: ${output}`);
+  });
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// RUN
+// ─────────────────────────────────────────────────────────────────────────────
+fs.mkdirSync(OUTPUT_DIR, { recursive: true });
+fs.writeFileSync(path.join(OUTPUT_DIR, 'remote.html'), REMOTE_HTML, 'utf8');
+console.log(`Built: ${path.join(OUTPUT_DIR, 'remote.html')}`);
+
+Promise.all([
+  buildPresentation(INPUT_EN, OUTPUT_EN, langSwitcherEn),
+  buildPresentation(INPUT_VI, OUTPUT_VI, langSwitcherVi),
+]).catch(err => {
   console.error('Build failed:', err);
   process.exit(1);
 });

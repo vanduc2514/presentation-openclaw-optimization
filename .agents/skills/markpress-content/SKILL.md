@@ -183,3 +183,42 @@ Standard markdown image syntax works. By default markpress **embeds** images as 
    ```bash
    npm run build
    ```
+
+---
+
+## Language Versions
+
+This presentation has **two parallel source files** that must always stay in sync:
+
+| File | Language |
+|---|---|
+| `slides/presentation.en.md` | English |
+| `slides/presentation.vi.md` | Vietnamese |
+
+### Required: Update Both Files Together
+
+**Whenever you edit slide content, you MUST update both `presentation.en.md` and `presentation.vi.md`.**
+
+Rules:
+- Translate the content change into the other language — never leave one version with outdated information.
+- Keep slide order, `------` separators, and `<!--slide-attr ...-->` positioning identical between the two files.
+- Keep code examples, JSON configs, and technical identifiers identical — only the surrounding human-language text gets translated.
+- Speaker notes (`<!-- SPEAKER NOTES ... -->`) must also be translated and updated in both files.
+
+### Structural Elements That Must Match Between Files
+
+| Element | Must Match? |
+|---|---|
+| Slide count | ✅ Yes |
+| `<!--slide-attr x= y= rotate= scale= -->` values | ✅ Yes |
+| `------` separator placement | ✅ Yes |
+| JSON/YAML/code block contents | ✅ Yes |
+| Link URLs | ✅ Yes |
+| Human-readable text (headings, bullets, notes) | ❌ Translated |
+
+### Workflow
+
+1. Make your content change in `presentation.en.md`
+2. Apply the equivalent translated change to `presentation.vi.md`
+3. Run `npm run build` — this builds both outputs at once
+4. Verify both `output/index.html` and `output/index.vi.html` look correct
