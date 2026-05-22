@@ -2,79 +2,79 @@
 {
   "autoSplit": false,
   "sanitize": false,
-  "title": "OpenClaw Optimization"
+  "title": "Tối ưu OpenClaw"
 }
 markpress-opt-->
 
 <!--slide-attr x=0 y=0 scale=1.2 -->
 
-# OpenClaw Optimization
-## Make Your AI Agent Cheaper, Faster, and Smarter
+# Tối ưu OpenClaw
+## Giúp AI agent của bạn rẻ hơn, nhanh hơn và thông minh hơn
 
-Using only `openclaw.json`
+Chỉ với `openclaw.json`
 
 <!-- SPEAKER NOTES
-Welcome everyone. Today we are talking about a practical, hands-on topic: how to optimize an AI agent running on OpenClaw so it costs less, runs faster, and stays reliable.
+Xin chào mọi người. Hôm nay chúng ta sẽ nói về một chủ đề rất thực tế và có thể áp dụng ngay: tối ưu một AI agent chạy trên OpenClaw để giảm chi phí, chạy nhanh hơn và vẫn giữ được độ ổn định.
 
-No theory, no hand-waving. By the end you will have a ready-to-paste openclaw.json config that delivers real savings.
+Không lý thuyết lan man, không nói chung chung. Sau buổi này, mọi người sẽ có một cấu hình openclaw.json có thể copy-paste ngay để tiết kiệm chi phí thật sự.
 
-Introduce yourself briefly. Mention your experience running OpenClaw in production.
+Giới thiệu ngắn về bản thân. Nhắc tới kinh nghiệm vận hành OpenClaw trong môi trường production.
 -->
 
 ------
 
 <!--slide-attr x=2000 y=-150 rotate=-2 scale=1.0 -->
 
-# The Agent Has a Spending Problem
+# Agent đang có vấn đề về chi tiêu
 
-- Every message **re-sends all previous messages**
-- Background checks fire every **30 minutes by default**
-- Workspace files reload on **every single turn**
+- Mỗi tin nhắn đều **gửi lại toàn bộ các tin nhắn trước đó**
+- Kiểm tra nền mặc định chạy mỗi **30 phút**
+- File trong workspace được nạp lại ở **mọi lượt hội thoại**
 
-> By turn 20, you are paying for turns 1 through 19 all over again.
+> Tới lượt thứ 20, bạn vẫn đang trả tiền lại cho các lượt 1 đến 19.
 
 <!-- SPEAKER NOTES
-This is the root cause of almost every surprise bill.
+Đây là gốc rễ của gần như mọi hóa đơn tăng bất ngờ.
 
-The agent does not just process your latest message — it re-processes the entire conversation history each time. On top of that, a background heartbeat fires every 30 minutes, even at 3am when no one is using it.
+Agent không chỉ xử lý tin nhắn mới nhất của bạn — nó xử lý lại toàn bộ lịch sử hội thoại ở mỗi lượt. Chưa hết, heartbeat nền còn chạy mỗi 30 phút, kể cả lúc 3 giờ sáng khi không ai dùng.
 
-Ask the audience: "Has anyone been surprised by their API bill this month?" Usually a few hands.
+Có thể hỏi khán giả: “Tháng này có ai bị bất ngờ vì hóa đơn API không?” Thường sẽ có vài người giơ tay.
 
-This is not a bug — it is how LLMs work. But OpenClaw gives you knobs to control it.
+Đây không phải bug — đó là cách LLM hoạt động. Nhưng OpenClaw cho chúng ta các nút chỉnh để kiểm soát chuyện này.
 -->
 
 ------
 
 <!--slide-attr x=4000 y=150 rotate=2 scale=1.0 -->
 
-# What This Actually Costs
+# Chi phí thực tế là bao nhiêu?
 
-| Model | Estimated Monthly Cost |
+| Model | Ước tính chi phí mỗi tháng |
 |---|---|
-| Claude Opus 4.6 | ~$325 / month |
-| Claude Sonnet 4.6 | ~$188 / month |
-| Gemini 2.5 Flash | ~$24 / month |
-| GPT-OSS-120B | ~$2 / month |
+| Claude Opus 4.6 | ~$325 / tháng |
+| Claude Sonnet 4.6 | ~$188 / tháng |
+| Gemini 2.5 Flash | ~$24 / tháng |
+| GPT-OSS-120B | ~$2 / tháng |
 
-**Most of that is overhead, not actual work.**
+**Phần lớn khoản này là chi phí phát sinh, không phải công việc thực sự.**
 
 <!-- SPEAKER NOTES
-These numbers come from real usage patterns measured for a typical daily developer workflow.
+Các con số này lấy từ mô hình sử dụng thực tế của một developer làm việc hằng ngày.
 
-The heartbeat alone — those background checks — accounts for roughly $30 to $100 per month on flagship models.
+Riêng heartbeat — tức các lần kiểm tra nền — đã tiêu tốn khoảng $30 đến $100 mỗi tháng nếu dùng các model đầu bảng.
 
-The good news: nearly all of this overhead is configurable. You can realistically cut costs by 60 to 80 percent with the settings we will cover today, without sacrificing quality.
+Tin vui là gần như toàn bộ phần overhead này đều cấu hình được. Thực tế, bạn có thể cắt 60 đến 80 phần trăm chi phí với các thiết lập hôm nay mà không làm giảm chất lượng.
 
-Point to the GPT-OSS-120B row — this is what smart routing and optimization can bring you down to.
+Chỉ vào dòng GPT-OSS-120B — đó là mức chi phí bạn có thể hạ xuống nhờ routing và tối ưu hợp lý.
 -->
 
 ------
 
 <!--slide-attr x=6000 y=-100 rotate=-1 scale=1.1 -->
 
-# `openclaw.json` — Your Control Panel
+# `openclaw.json` — bảng điều khiển của bạn
 
-One file at `~/.openclaw/openclaw.json`
+Một file tại `~/.openclaw/openclaw.json`
 
 ```json
 {
@@ -86,45 +86,45 @@ One file at `~/.openclaw/openclaw.json`
 }
 ```
 
-Change a few settings here. **Cut costs 60–80%.** No code changes needed.
+Chỉ cần đổi vài cấu hình ở đây. **Cắt 60–80% chi phí.** Không cần sửa code.
 
-> All configs shown today live inside this single file.
+> Toàn bộ cấu hình hôm nay đều nằm trong đúng một file này.
 
 <!-- SPEAKER NOTES
-This is the key message: everything we are about to discuss lives in one JSON file on your machine.
+Đây là thông điệp quan trọng nhất: mọi thứ chúng ta sắp nói tới đều nằm trong một file JSON trên máy của bạn.
 
-No code changes, no redeployment, no complicated infrastructure. You edit one file and restart OpenClaw.
+Không cần sửa code, không cần deploy lại, không cần hạ tầng phức tạp. Bạn chỉnh một file rồi khởi động lại OpenClaw.
 
-We will cover 8 configurations across 4 groups. At the end I will show you the complete combined config you can copy-paste directly.
+Chúng ta sẽ đi qua 8 cấu hình thuộc 4 nhóm. Cuối bài tôi sẽ đưa luôn cấu hình hoàn chỉnh để mọi người copy-paste trực tiếp.
 -->
 
 ------
 
 <!--slide-attr x=6000 y=1800 rotate=3 scale=1.0 -->
 
-# Context Budget
+# Ngân sách context
 
-> What goes into the AI's memory each turn?
+> Mỗi lượt, AI mang những gì vào bộ nhớ làm việc?
 
-Every character in your workspace files = tokens = money.
+Mỗi ký tự trong file workspace = token = tiền.
 
-These settings control the **size of that payload**.
+Những thiết lập này kiểm soát **kích thước gói dữ liệu đó**.
 
 <!-- SPEAKER NOTES
-Think of each AI turn as sending a package. This group controls what goes inside that package.
+Hãy hình dung mỗi lượt AI là một kiện hàng được gửi đi. Nhóm này quyết định trong kiện hàng đó có gì.
 
-By default, OpenClaw stuffs in all your workspace files every single time. We can change that.
+Mặc định, OpenClaw nhét toàn bộ file workspace vào ở mọi lượt. Chúng ta có thể đổi điều đó.
 
-Two key settings here: skip re-injection on follow-up turns, and prune old tool results after a timeout.
+Hai thiết lập quan trọng ở đây: bỏ nạp lại ở các lượt tiếp theo, và dọn bớt kết quả tool cũ sau một khoảng thời gian.
 -->
 
 ------
 
 <!--slide-attr x=4000 y=1650 rotate=-2 scale=1.0 -->
 
-# Skip Re-Injection
+# Bỏ nạp lại nội dung đã có
 
-> Like reading your company handbook before every Slack reply. Once is enough.
+> Giống như đọc lại sổ tay công ty trước mọi tin nhắn Slack. Một lần là đủ.
 
 ```json
 {
@@ -134,29 +134,29 @@ Two key settings here: skip re-injection on follow-up turns, and prune old tool 
 }
 ```
 
-On a 20-turn session: eliminates re-injection cost on ~18 of those turns.
+Trong một phiên 20 lượt: loại bỏ chi phí re-injection ở khoảng 18 lượt.
 
 [agents.defaults.contextInjection](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-contextinjection)
 
 <!-- SPEAKER NOTES
-contextInjection controls when workspace bootstrap files — SOUL.md, AGENTS.md, and friends — get injected into the system prompt.
+contextInjection quyết định khi nào các file bootstrap trong workspace — như SOUL.md, AGENTS.md và các file tương tự — được chèn vào system prompt.
 
-The default value is "always", meaning every single continuation turn pays the full bootstrap token cost.
+Giá trị mặc định là "always", nghĩa là mọi lượt tiếp diễn đều phải trả lại toàn bộ chi phí token của phần bootstrap.
 
-"continuation-skip" is the setting you want. It skips re-injection on safe follow-up turns and still rebuilds on heartbeats and post-compaction — so nothing important is lost.
+"continuation-skip" mới là lựa chọn nên dùng. Nó bỏ qua re-injection ở các lượt follow-up an toàn, nhưng vẫn dựng lại đầy đủ ở heartbeat và sau compaction — nên không mất gì quan trọng.
 
-The char caps are guardrails: if someone accidentally writes a massive AGENTS.md, it won't blow up your context budget.
+Các giới hạn ký tự là hàng rào an toàn: nếu ai đó lỡ viết một file AGENTS.md quá lớn thì cũng không làm nổ ngân sách context.
 
-Impact is dramatic: on a typical 20-turn conversation with 10,000 tokens of workspace files, you eliminate re-injection on roughly 18 of those 20 turns.
+Tác động là rất lớn: với một cuộc hội thoại 20 lượt và khoảng 10.000 token từ file workspace, bạn loại được re-injection ở cỡ 18 trên 20 lượt.
 -->
 
 ------
 
 <!--slide-attr x=2000 y=1950 rotate=2 scale=1.0 -->
 
-# Prune Old Results
+# Dọn kết quả cũ
 
-> Shred documents after you have read and filed them, do not let them pile up on your desk.
+> Đọc xong thì lưu hồ sơ hoặc hủy giấy tờ, đừng để chất đống trên bàn làm việc.
 
 ```json
 {
@@ -167,47 +167,47 @@ Impact is dramatic: on a typical 20-turn conversation with 10,000 tokens of work
 }
 ```
 
-Keeps the context lean during long, multi-hour sessions.
+Giữ context gọn trong các phiên kéo dài nhiều giờ.
 
 [agents.defaults.contextPruning](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-contextpruning)
 
 <!-- SPEAKER NOTES
-When the agent reads a file, browses the web, or runs a shell command, the full output gets stored in the conversation history.
+Khi agent đọc file, duyệt web hay chạy lệnh shell, toàn bộ đầu ra sẽ được lưu vào lịch sử hội thoại.
 
-After a while — especially in long sessions — those results are stale. You have already processed them. But they still take up space in every subsequent API call.
+Sau một thời gian — đặc biệt ở các phiên dài — những kết quả đó đã cũ. Bạn đã xử lý xong rồi. Nhưng chúng vẫn chiếm chỗ trong mọi lần gọi API tiếp theo.
 
-contextPruning removes them in-memory before each LLM call. It does not touch your on-disk transcript, so nothing is permanently lost.
+contextPruning dọn chúng ngay trong bộ nhớ trước mỗi lần gọi LLM. Nó không đụng tới transcript trên đĩa, nên không có gì bị mất vĩnh viễn.
 
-The process: wait for TTL to expire, soft-trim oversized results (keep head and tail, insert "..."), then hard-clear the rest with a placeholder.
+Quy trình là: chờ TTL hết hạn, cắt mềm các kết quả quá lớn (giữ đầu và cuối, chèn "..."), rồi xóa cứng phần còn lại bằng một placeholder.
 
-With a 1h TTL, any tool result older than an hour gets cleaned up automatically.
+Với TTL là 1 giờ, mọi kết quả tool cũ hơn 1 giờ sẽ được tự động dọn.
 -->
 
 ------
 
 <!--slide-attr x=0 y=1800 rotate=-3 scale=1.0 -->
 
-# Memory & State
+# Bộ nhớ & trạng thái
 
-> What does the agent remember between sessions?
+> Agent sẽ nhớ gì giữa các phiên làm việc?
 
-Without good memory: the agent rediscovers the same facts every time.
+Nếu memory kém: lần nào agent cũng phải tự tìm lại từ đầu.
 
-With good memory: it picks up exactly where it left off.
+Nếu memory tốt: nó tiếp tục đúng từ điểm đang dang dở.
 
 <!-- SPEAKER NOTES
-This group is about making sure what matters gets preserved.
+Nhóm này tập trung vào việc giữ lại những gì thật sự quan trọng.
 
-Two critical scenarios: what happens when the context window fills up and gets summarized (compaction), and how the agent finds things it has stored in memory.
+Có hai tình huống then chốt: khi cửa sổ context đầy và bị tóm tắt lại (compaction), và khi agent cần tìm lại thứ đã lưu trong memory.
 -->
 
 ------
 
 <!--slide-attr x=0 y=3600 rotate=2 scale=1.0 -->
 
-# Save Before You Forget
+# Lưu lại trước khi quên
 
-> Taking notes before the meeting ends, before someone erases the whiteboard.
+> Ghi chú trước khi cuộc họp kết thúc, trước khi ai đó xóa mất bảng trắng.
 
 ```json
 {
@@ -215,35 +215,35 @@ Two critical scenarios: what happens when the context window fills up and gets s
     "memoryFlush": {
       "enabled": true,
       "model": "ollama/qwen3:8b",
-      "prompt": "Write lasting notes to memory/YYYY-MM-DD.md. Reply NO_REPLY if nothing to store."
+      "prompt": "Ghi các ghi chú bền vững vào memory/YYYY-MM-DD.md. Trả lời NO_REPLY nếu không có gì cần lưu."
     }
   }
 }
 ```
 
-Uses a **free local model**, costs $0.
+Dùng **model local miễn phí**, chi phí $0.
 
 [compaction.memoryFlush](https://docs.openclaw.ai/gateway/configuration)
 
 <!-- SPEAKER NOTES
-Compaction happens automatically when the context window gets close to the limit. OpenClaw summarizes everything into a condensed form and continues.
+Compaction tự động xảy ra khi cửa sổ context tiến gần giới hạn. OpenClaw sẽ tóm tắt mọi thứ thành dạng cô đọng rồi tiếp tục.
 
-The problem: critical details can get lost in that summarization. Important decisions, open tasks, current project state — gone.
+Vấn đề là: các chi tiết quan trọng có thể biến mất trong quá trình tóm tắt đó. Quyết định quan trọng, việc đang mở, trạng thái hiện tại của dự án — tất cả có thể trôi mất.
 
-memoryFlush fires a silent agent turn right before compaction. Its only job is to write durable notes to a file on disk.
+memoryFlush kích hoạt một lượt agent chạy ngầm ngay trước compaction. Nhiệm vụ duy nhất của nó là ghi lại các ghi chú bền vững ra file trên đĩa.
 
-The brilliant part: you can point this at a free local model like Qwen 3 8B running on Ollama. This is a pure write task — it does not need to be smart, just reliable. Zero API cost.
+Điểm hay là bạn có thể trỏ nó sang một model local miễn phí như Qwen 3 8B chạy qua Ollama. Đây chỉ là tác vụ ghi chép — không cần quá thông minh, chỉ cần ổn định. Chi phí API bằng 0.
 
-Requires OpenClaw v2026.2.23 or later for the compaction bug fixes.
+Cần OpenClaw v2026.2.23 trở lên để có các bản vá lỗi compaction.
 -->
 
 ------
 
 <!--slide-attr x=2000 y=3450 rotate=-2 scale=1.0 -->
 
-# Smarter Memory Recall
+# Gọi lại memory thông minh hơn
 
-> The difference between `Ctrl+F` and a librarian who understands context.
+> Khác biệt giữa `Ctrl+F` và một thủ thư hiểu ngữ cảnh.
 
 ```json
 {
@@ -253,49 +253,49 @@ Requires OpenClaw v2026.2.23 or later for the compaction bug fixes.
 }
 ```
 
-Enables **hybrid search**: keyword matching + vector similarity.
+Bật **hybrid search**: khớp từ khóa + độ tương đồng vector.
 
-Auto-detects your OpenAI API key. Indexes all `memory/*.md` files.
+Tự nhận diện OpenAI API key của bạn. Lập chỉ mục toàn bộ file `memory/*.md`.
 
 [agents.defaults.memorySearch](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-memorysearch)
 
 <!-- SPEAKER NOTES
-OpenClaw has a built-in SQLite memory engine. By default it uses FTS5 keyword search — fast but literal.
+OpenClaw có sẵn engine memory dùng SQLite. Mặc định nó dùng tìm kiếm từ khóa FTS5 — nhanh nhưng quá sát mặt chữ.
 
-With a provider configured, you get hybrid search: FTS5 for exact matches plus vector embeddings for semantic similarity.
+Khi có provider phù hợp, bạn sẽ có hybrid search: FTS5 cho khớp chính xác cộng với vector embedding để tìm theo ngữ nghĩa.
 
-Practical example: you stored a note about "API rate limits" three months ago. You later ask about "why requests are being throttled". Keyword search misses it. Hybrid search finds it.
+Ví dụ thực tế: bạn đã lưu một ghi chú về "giới hạn tốc độ API" từ ba tháng trước. Sau này bạn hỏi về "vì sao request bị throttle". Tìm kiếm từ khóa có thể bỏ lỡ, hybrid search sẽ tìm ra.
 
-The embedding model used is text-embedding-3-small by default — very cheap, about $0.00002 per 1,000 tokens.
+Model embedding mặc định là text-embedding-3-small — rất rẻ, khoảng $0.00002 cho mỗi 1.000 token.
 
-This setting auto-detects your API key. If you already have OpenAI configured, it just works.
+Thiết lập này tự phát hiện API key. Nếu bạn đã cấu hình OpenAI sẵn rồi, nó hoạt động ngay.
 -->
 
 ------
 
 <!--slide-attr x=4000 y=3750 rotate=3 scale=1.0 -->
 
-# Model Routing
+# Điều phối model
 
-> Which AI model runs for which task?
+> Tác vụ nào nên chạy bằng model nào?
 
-Not every task needs the most expensive model.
+Không phải việc gì cũng cần model đắt nhất.
 
-Smart routing uses the right tool for the job, and the right price.
+Điều phối thông minh là dùng đúng công cụ cho đúng việc — và đúng mức giá.
 
 <!-- SPEAKER NOTES
-The key insight: you are probably using one expensive flagship model for everything, including simple background checks that a cheap or free model could handle perfectly well.
+Ý quan trọng ở đây là: rất có thể bạn đang dùng một model đầu bảng đắt tiền cho mọi thứ, kể cả các kiểm tra nền đơn giản mà model rẻ hơn hoặc miễn phí vẫn làm tốt.
 
-Two settings here: prompt caching to avoid re-processing, and a fallback chain that automatically uses cheaper models when the primary is overloaded.
+Nhóm này có hai thiết lập: prompt caching để tránh xử lý đi xử lý lại, và chuỗi fallback để tự động dùng model rẻ hơn khi model chính bị quá tải.
 -->
 
 ------
 
 <!--slide-attr x=6000 y=3600 rotate=-2 scale=1.0 -->
 
-# Cache the System Prompt
+# Lưu cache cho system prompt
 
-> A teacher reads the class rules once, not before every student question.
+> Giáo viên chỉ đọc nội quy lớp một lần, không đọc lại trước mỗi câu hỏi của từng học sinh.
 
 ```json
 {
@@ -305,31 +305,31 @@ Two settings here: prompt caching to avoid re-processing, and a fallback chain t
 }
 ```
 
-**Up to 90% discount** on cached tokens with Anthropic.
+**Giảm tới 90%** chi phí token đã cache với Anthropic.
 
-Works per-model and per-agent. Three levels: `none`, `short`, `long`.
+Áp dụng theo từng model và từng agent. Có 3 mức: `none`, `short`, `long`.
 
 [agents.defaults.params.cacheRetention](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-params-cacheretention)
 
 <!-- SPEAKER NOTES
-Prompt caching is a provider-level feature that OpenClaw exposes as a first-class config key.
+Prompt caching là tính năng ở phía provider, và OpenClaw đưa nó thành một khóa cấu hình hạng nhất.
 
-When you set cacheRetention to "long", OpenClaw tells the provider to keep your system prompt in a cache. Subsequent turns that share the same prefix pay a fraction of the normal input token price.
+Khi bạn đặt cacheRetention là "long", OpenClaw sẽ yêu cầu provider giữ system prompt của bạn trong cache. Các lượt tiếp theo có cùng tiền tố sẽ chỉ trả một phần nhỏ giá token đầu vào thông thường.
 
-Anthropic offers up to 90% discount on cached tokens. On a 10,000-token system prompt that gets re-sent 50 times a day, this is significant savings.
+Anthropic giảm tới 90% cho token đã cache. Với system prompt 10.000 token được gửi lại 50 lần mỗi ngày, khoản tiết kiệm là rất đáng kể.
 
-You can override this per-model or per-agent. For example, disable it for agents where the system prompt varies on every run — like a dynamic alert agent.
+Bạn có thể override cấu hình này theo từng model hoặc từng agent. Ví dụ: tắt với những agent mà system prompt thay đổi ở mọi lượt chạy — như một agent cảnh báo động.
 
-The config merge order is: defaults → per-model overrides → per-agent overrides.
+Thứ tự merge cấu hình là: defaults → override theo model → override theo agent.
 -->
 
 ------
 
 <!--slide-attr x=6000 y=5400 rotate=2 scale=1.0 -->
 
-# Always Have a Backup
+# Luôn có phương án dự phòng
 
-> If your first-choice restaurant is full, you already have a ranked list of backups.
+> Nếu quán ăn bạn thích hết chỗ, bạn đã có sẵn danh sách thay thế theo thứ tự ưu tiên.
 
 ```json
 {
@@ -343,47 +343,47 @@ The config merge order is: defaults → per-model overrides → per-agent overri
 }
 ```
 
-Auto-rotates on rate-limit, overload, or unavailability errors.
+Tự động xoay vòng khi gặp lỗi rate-limit, quá tải hoặc không khả dụng.
 
 [agents.defaults.model.fallbacks](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-model-fallbacks)
 
 <!-- SPEAKER NOTES
-This serves two purposes: reliability and cost.
+Thiết lập này phục vụ hai mục tiêu: độ tin cậy và chi phí.
 
-For reliability: when a flagship model is overloaded — which happens at peak hours — OpenClaw falls back to the next model in the chain automatically. No error, no interruption, no manual intervention.
+Về độ tin cậy: khi model đầu bảng bị quá tải — chuyện rất hay xảy ra vào giờ cao điểm — OpenClaw sẽ tự động rơi xuống model tiếp theo trong chuỗi. Không lỗi, không gián đoạn, không cần thao tác tay.
 
-For cost: put cheaper models at the bottom of the fallback chain. Off-peak background tasks that end up on a fallback model cost significantly less than the primary.
+Về chi phí: hãy đặt các model rẻ hơn ở cuối chuỗi fallback. Những tác vụ nền chạy vào giờ thấp điểm mà bị chuyển sang fallback sẽ rẻ hơn đáng kể so với model chính.
 
-Important nuance: this applies to configured defaults. If the user explicitly chooses a model with /model command, no fallback is applied — that preserves user intent.
+Một điểm cần lưu ý: cơ chế này áp dụng cho cấu hình mặc định. Nếu người dùng tự chọn model bằng lệnh /model thì fallback sẽ không được áp dụng — như vậy sẽ giữ đúng ý định của người dùng.
 
-Auto fallback is tracked with modelOverrideSource "auto" so you can see in the logs which model actually ran.
+Auto fallback được đánh dấu bằng modelOverrideSource là "auto" để bạn xem trong log model nào đã thực sự chạy.
 -->
 
 ------
 
 <!--slide-attr x=4000 y=5250 rotate=-3 scale=1.0 -->
 
-# Heartbeat Scheduling
+# Lập lịch heartbeat
 
-> What does the agent do when no one is talking to it?
+> Khi không ai nói chuyện với agent, nó đang làm gì?
 
-By default: wakes up every 30 minutes and runs expensive checks, even at 3am, even when there is nothing to do.
+Mặc định: cứ 30 phút lại thức dậy và chạy các kiểm tra tốn kém, kể cả lúc 3 giờ sáng, kể cả khi chẳng có gì để làm.
 
 <!-- SPEAKER NOTES
-This is the single biggest hidden cost driver in most OpenClaw setups.
+Đây là nguồn chi phí ẩn lớn nhất trong hầu hết các setup OpenClaw.
 
-Every heartbeat loads all workspace files and the full conversation history. On a flagship model, that heartbeat alone can cost $30 to $100 per month.
+Mỗi lần heartbeat đều nạp toàn bộ file workspace và toàn bộ lịch sử hội thoại. Với model đầu bảng, riêng heartbeat đã có thể tốn $30 đến $100 mỗi tháng.
 
-Two settings here: tune the heartbeat to be much lighter, and add a task list so the agent can skip the LLM call entirely when there is nothing to do.
+Nhóm này có hai thiết lập: làm heartbeat nhẹ đi rất nhiều, và thêm danh sách tác vụ để agent có thể bỏ qua luôn lời gọi LLM nếu không có gì cần làm.
 -->
 
 ------
 
 <!--slide-attr x=2000 y=5550 rotate=2 scale=1.0 -->
 
-# Wake Up Smarter
+# Thức dậy thông minh hơn
 
-> Set an alarm only on workdays, not every 30 minutes around the clock.
+> Đặt báo thức vào giờ làm việc, không phải cứ 30 phút là kêu cả ngày lẫn đêm.
 
 ```json
 {
@@ -398,71 +398,71 @@ Two settings here: tune the heartbeat to be much lighter, and add a task list so
 }
 ```
 
-`isolatedSession: true` alone: **~100K tokens → ~2–5K per run.**
+Chỉ riêng `isolatedSession: true`: **~100K token → ~2–5K mỗi lần chạy.**
 
 [agents.defaults.heartbeat](https://docs.openclaw.ai/gateway/config-agents#agents-defaults-heartbeat)
 
 <!-- SPEAKER NOTES
-Let me walk through each flag:
+Tôi đi nhanh qua từng cờ cấu hình:
 
-every "55m": slightly less frequent than the 30-minute default. Keeps cache warm without burning tokens.
+every "55m": thưa hơn một chút so với mặc định 30 phút. Vẫn đủ giữ cache ấm nhưng không đốt token vô ích.
 
-lightContext: true — instead of loading all workspace files, only HEARTBEAT.md is injected. If your workspace is 10,000 tokens, this cuts heartbeat context by 90%.
+lightContext: true — thay vì nạp toàn bộ file workspace, chỉ chèn HEARTBEAT.md. Nếu workspace của bạn có 10.000 token, heartbeat context giảm được khoảng 90%.
 
-isolatedSession: true — each heartbeat run starts as a fresh session instead of loading the full conversation history. This is the biggest win: drops from roughly 100,000 history tokens to 2,000 to 5,000 tokens per run.
+isolatedSession: true — mỗi lần heartbeat chạy như một phiên mới, thay vì nạp toàn bộ lịch sử hội thoại. Đây là cú giảm lớn nhất: từ khoảng 100.000 token lịch sử xuống còn 2.000 đến 5.000 token cho mỗi lượt.
 
-skipWhenBusy: true — if another agent lane is already running, skip this heartbeat. No doubling up.
+skipWhenBusy: true — nếu một lane agent khác đang chạy thì bỏ qua heartbeat này. Không chạy chồng lên nhau.
 
-activeHours — only fire during these hours. No off-hours charges at all.
+activeHours — chỉ chạy trong khung giờ này. Ngoài giờ làm việc sẽ không tốn tiền.
 
-model pointing to a free local Ollama model: routine heartbeat checks do not need a frontier model.
+model trỏ về một model Ollama local miễn phí: các kiểm tra heartbeat thường quy không cần model frontier.
 
-Combined, these settings can reduce heartbeat costs by over 95%.
+Gộp lại, các cấu hình này có thể giảm hơn 95% chi phí heartbeat.
 -->
 
 ------
 
 <!--slide-attr x=0 y=5400 rotate=-2 scale=1.0 -->
 
-# Pay Only When There Is Work
+# Chỉ trả tiền khi có việc
 
-> A checklist that tells the agent "nothing to do today, go back to sleep."
+> Một checklist để agent biết rằng “hôm nay không có gì, ngủ tiếp đi”.
 
 ```yaml
 <!-- HEARTBEAT.md -->
 tasks:
   - id: inbox-check
     interval: 1h
-    prompt: "Check inbox. Reply HEARTBEAT_OK if nothing urgent."
+    prompt: "Kiểm tra inbox. Nếu không có gì gấp, trả lời HEARTBEAT_OK."
   - id: memory-consolidate
     interval: 12h
-    prompt: "Summarize memory files into MEMORY.md."
+    prompt: "Tóm tắt các file memory vào MEMORY.md."
   - id: weekly-review
     interval: 7d
-    prompt: "Write weekly review to memory/weekly-YYYY-MM-DD.md."
+    prompt: "Viết weekly review vào memory/weekly-YYYY-MM-DD.md."
 ```
 
-**Zero token cost** when no tasks are due.
+**Chi phí token bằng 0** khi chưa có tác vụ nào đến hạn.
 
 [HEARTBEAT.md task scheduling](https://docs.openclaw.ai/gateway/configuration)
 
 <!-- SPEAKER NOTES
-This is the sharpest cost lever in the entire heartbeat system.
+Đây là đòn bẩy chi phí sắc nhất trong toàn bộ hệ thống heartbeat.
 
-When you add a tasks: block to HEARTBEAT.md, OpenClaw evaluates the task schedule before making any LLM call. If no tasks are due, it logs reason=no-tasks-due and skips entirely.
+Khi bạn thêm block tasks: vào HEARTBEAT.md, OpenClaw sẽ kiểm tra lịch tác vụ trước khi gọi LLM. Nếu chưa có tác vụ nào đến hạn, nó ghi reason=no-tasks-due và bỏ qua hoàn toàn.
 
-Think about what that means: a heartbeat that fires every 55 minutes but has no tasks due for the next several hours costs zero tokens. Nothing. You are not charged at all.
+Hãy nghĩ xem điều đó có nghĩa gì: heartbeat có thể đánh thức mỗi 55 phút, nhưng nếu vài giờ tới chưa có việc gì đến hạn thì chi phí token bằng 0. Không mất gì cả.
 
-The tasks: block lets you schedule exactly when each check should run — hourly, every 12 hours, weekly. Only the tasks that are actually due trigger an LLM call.
+Block tasks: cho bạn lên lịch chính xác khi nào mỗi việc cần chạy — theo giờ, mỗi 12 giờ, hằng tuần. Chỉ những tác vụ thật sự đến hạn mới tạo ra lời gọi LLM.
 
-Combined with D.1, you go from heartbeat costing $30-$100/month to a few dollars or even less.
+Kết hợp với D.1, bạn có thể kéo chi phí heartbeat từ mức $30-$100/tháng xuống còn vài đô hoặc thấp hơn nữa.
 -->
 
 ------
 
 <!--slide-attr x=0 y=7200 rotate=3 scale=0.9 -->
 
-# The Complete `openclaw.json`
+# `openclaw.json` hoàn chỉnh
 
 ```json
 {
@@ -487,7 +487,7 @@ Combined with D.1, you go from heartbeat costing $30-$100/month to a few dollars
         "memoryFlush": {
           "enabled": true,
           "model": "ollama/qwen3:8b",
-          "prompt": "Write lasting notes to memory/YYYY-MM-DD.md. Reply NO_REPLY if nothing to store."
+          "prompt": "Ghi các ghi chú bền vững vào memory/YYYY-MM-DD.md. Trả lời NO_REPLY nếu không có gì cần lưu."
         }
       },
       "memorySearch": { "provider": "openai" }
@@ -497,97 +497,97 @@ Combined with D.1, you go from heartbeat costing $30-$100/month to a few dollars
 ```
 
 <!-- SPEAKER NOTES
-Here it is — all 8 configurations combined into one file.
+Đây là toàn bộ 8 cấu hình gộp lại trong một file.
 
-This is not aspirational. This is a production-tested config that covers context budget, memory, model routing, and heartbeat in a single place.
+Đây không phải cấu hình minh họa cho đẹp. Đây là cấu hình đã được thử nghiệm trong môi trường production, bao phủ đủ context budget, memory, model routing và heartbeat trong cùng một chỗ.
 
-You can copy this right now and adapt it to your setup. The only things you might want to change:
-- Swap the primary model to whatever you are currently using
-- Adjust activeHours to match your timezone and work schedule
-- Remove the Ollama references if you are not running local models
+Bạn có thể copy ngay bây giờ rồi chỉnh cho phù hợp với setup của mình. Những thứ có thể muốn thay đổi là:
+- Đổi model chính sang model bạn đang dùng
+- Chỉnh activeHours theo múi giờ và lịch làm việc của bạn
+- Bỏ các tham chiếu Ollama nếu bạn không chạy model local
 
-Coming up: how to apply this in about 10 seconds.
+Tiếp theo: cách áp dụng trong khoảng 10 giây.
 -->
 
 ------
 
 <!--slide-attr x=2000 y=7050 rotate=-2 scale=1.0 -->
 
-# How to Apply This Right Now
+# Áp dụng ngay bây giờ
 
-1. Open a chat with your agent
-2. Paste the config above
-3. Say: `"Update my openclaw.json with this configuration"`
+1. Mở một cuộc chat với agent của bạn
+2. Dán cấu hình ở trên
+3. Nói: `"Hãy cập nhật openclaw.json của tôi theo cấu hình này"`
 
-The agent applies the changes and restarts automatically.
+Agent sẽ tự áp dụng thay đổi và khởi động lại.
 
-> No terminal, no file editing, no restart needed.
+> Không cần terminal, không cần sửa file thủ công, không cần tự restart.
 
 <!-- SPEAKER NOTES
-This is the point of the whole talk. You do not need to find the file, edit JSON by hand, or restart anything manually.
+Đây là ý chính của toàn bộ bài nói. Bạn không cần phải đi tìm file, sửa JSON bằng tay hay tự khởi động lại gì cả.
 
-Just have a conversation. Paste the config. Ask the agent to apply it.
+Chỉ cần trò chuyện. Dán cấu hình vào. Yêu cầu agent áp dụng.
 
-This works because OpenClaw agents can modify their own configuration files — and they know exactly where openclaw.json lives.
+Việc này hoạt động vì agent OpenClaw có thể tự sửa file cấu hình của chính nó — và nó biết chính xác openclaw.json nằm ở đâu.
 
-If you want to be cautious, ask the agent to show you the diff first before applying. That is a safe way to review what will change.
+Nếu muốn an toàn hơn, hãy yêu cầu agent show diff trước khi áp dụng. Đó là cách tốt để kiểm tra trước mọi thay đổi.
 
-For production teams: you can version-control your openclaw.json in a private repository and have the agent pull and apply updates on demand.
+Với team production: bạn có thể version-control file openclaw.json trong một repository riêng tư rồi để agent tự pull và áp dụng khi cần.
 -->
 
 ------
 
 <!--slide-attr x=4000 y=7350 rotate=2 scale=1.0 -->
 
-# Keep Getting Better
+# Tối ưu là một vòng lặp
 
 ```
-Observe → Record → Improve → Repeat
+Quan sát → Ghi lại → Cải thiện → Lặp lại
 ```
 
-- **Observe:** Check your monthly API cost breakdown
-- **Record:** Note which operations drive the most spend
-- **Improve:** Tune one setting at a time, measure the change
-- **Repeat:** Production optimization is a habit, not a one-time setup
+- **Quan sát:** Xem breakdown chi phí API theo tháng
+- **Ghi lại:** Ghi chú thao tác nào đang tốn nhiều nhất
+- **Cải thiện:** Chỉnh từng cấu hình một, rồi đo lại thay đổi
+- **Lặp lại:** Tối ưu trong production là một thói quen, không phải việc làm một lần
 
-> The configs shown today are a strong starting point, not a final answer.
+> Những cấu hình hôm nay là điểm khởi đầu rất tốt, không phải đáp án cuối cùng.
 
 <!-- SPEAKER NOTES
-Optimization is not a one-time event. Your usage patterns change, new models come out, your agent takes on new tasks.
+Tối ưu không phải là việc làm một lần rồi xong. Cách bạn sử dụng thay đổi, model mới xuất hiện, agent của bạn cũng sẽ nhận thêm việc mới.
 
-The loop is simple: look at what you spent, understand what drove it, change one thing, measure again.
+Vòng lặp rất đơn giản: xem bạn đã tốn gì, hiểu cái gì đang gây tốn, đổi một thứ, rồi đo lại.
 
-OpenClaw logs include enough detail to trace which heartbeats fired, which models were used, how many tokens each turn consumed. Use those logs.
+Log của OpenClaw có đủ chi tiết để lần ra heartbeat nào đã chạy, model nào đã được dùng, mỗi lượt tiêu tốn bao nhiêu token. Hãy dùng những log đó.
 
-Start with the heartbeat settings — those have the highest impact and are safe to change without affecting output quality.
+Hãy bắt đầu với heartbeat — đây là nhóm có tác động lớn nhất và khá an toàn vì hầu như không ảnh hưởng tới chất lượng đầu ra.
 
-Then move to context injection and pruning. Then caching. Then memory.
+Sau đó tới context injection và pruning. Rồi caching. Cuối cùng là memory.
 
-Each step builds on the last. After two or three iterations you will have a config dialed in for your specific workflow.
+Mỗi bước sẽ cộng dồn hiệu quả lên bước trước. Sau hai hoặc ba vòng lặp, bạn sẽ có một cấu hình rất khớp với workflow thực tế của mình.
 -->
 
 ------
 
 <!--slide-attr x=6000 y=7200 rotate=-1 scale=1.2 -->
 
-# Thank You
+# Cảm ơn mọi người
 
-Do you have any Questions ?
+Mọi người có câu hỏi nào không?
 
-Or just want to hang out ?
+Hoặc muốn giao lưu thêm cũng được.
 
-Feel free to reach me out at
+Có thể liên hệ với tôi tại
 
 [https://github.com/vanduc2514](https://github.com/vanduc2514)
 
 <!-- SPEAKER NOTES
-Leave plenty of time for questions — this topic always generates good discussion.
+Dành đủ thời gian cho phần hỏi đáp — chủ đề này thường tạo ra nhiều câu hỏi thú vị.
 
-Common questions to be ready for:
-1. "Does continuation-skip ever miss something important?" — No, it rebuilds fully on heartbeat and post-compaction turns.
-2. "What if I don't have Ollama installed?" — Remove the model overrides for heartbeat and memoryFlush. The defaults will use your primary model.
-3. "Is there a way to see cost savings before and after?" — Yes, compare your API provider's token usage dashboard before and after applying the config.
-4. "Will this work with OpenRouter?" — Yes, all settings apply regardless of provider. Model names just need to be in OpenRouter format.
+Một vài câu hỏi thường gặp để chuẩn bị sẵn:
+1. "continuation-skip có bao giờ bỏ sót thứ quan trọng không?" — Không, vì nó vẫn dựng lại đầy đủ ở heartbeat và các lượt sau compaction.
+2. "Nếu tôi không cài Ollama thì sao?" — Hãy bỏ các override model cho heartbeat và memoryFlush. Khi đó hệ thống sẽ dùng model chính.
+3. "Có cách nào nhìn thấy mức tiết kiệm trước và sau không?" — Có, hãy so sánh dashboard token usage của provider trước và sau khi áp dụng cấu hình.
+4. "Thiết lập này có chạy với OpenRouter không?" — Có, tất cả các thiết lập đều áp dụng với mọi provider. Chỉ cần tên model đúng theo định dạng OpenRouter.
 
-End with: "The config is in the repo README if you want to copy it now."
+Kết bằng câu: "Cấu hình nằm sẵn trong repo nếu mọi người muốn copy ngay bây giờ."
 -->
