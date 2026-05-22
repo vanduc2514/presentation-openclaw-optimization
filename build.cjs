@@ -29,8 +29,8 @@ const markpress = require('markpress');
 const INPUT_EN = path.resolve(__dirname, 'slides/presentation.en.md');
 const INPUT_VI = path.resolve(__dirname, 'slides/presentation.vi.md');
 const OUTPUT_DIR = path.resolve(__dirname, 'output');
-const OUTPUT_EN = path.resolve(OUTPUT_DIR, 'index.html');
-const OUTPUT_VI = path.resolve(OUTPUT_DIR, 'index.vi.html');
+const OUTPUT_VI = path.resolve(OUTPUT_DIR, 'index.html');
+const OUTPUT_EN = path.resolve(OUTPUT_DIR, 'index.en.html');
 
 // ─────────────────────────────────────────────────────────────────────────────
 // REMOTE CONTROL ASSETS
@@ -342,7 +342,7 @@ function applyHighlighting(html) {
 // Injected into each output so viewers can switch between EN and VI.
 // ─────────────────────────────────────────────────────────────────────────────
 const langSwitcherEn = `
-  <a id="lang-switcher" href="./index.vi.html" title="Switch to Vietnamese">🇻�� Tiếng Việt</a>
+  <a id="lang-switcher" href="./index.html" title="Switch to Tiếng Việt">🇻🇳 Tiếng Việt</a>
   <style>
     #lang-switcher {
       position: fixed;
@@ -368,7 +368,7 @@ const langSwitcherEn = `
   </style>`;
 
 const langSwitcherVi = `
-  <a id="lang-switcher" href="./index.html" title="Switch to English">🇬🇧 English</a>
+  <a id="lang-switcher" href="./index.en.html" title="Switch to English">🇬🇧 English</a>
   <style>
     #lang-switcher {
       position: fixed;

@@ -272,6 +272,23 @@
   (function () {
     'use strict';
 
+    /* ── ICE / TURN CONFIG ──────────────────────────────────────────────── */
+    var PEER_ICE_CONFIG = {
+      iceServers: [
+        { urls: 'stun:stun.l.google.com:19302' },
+        { urls: 'stun:stun1.l.google.com:19302' },
+        {
+          urls: [
+            'turn:openrelay.metered.ca:80',
+            'turn:openrelay.metered.ca:443',
+            'turns:openrelay.metered.ca:443'
+          ],
+          username: 'openrelayproject',
+          credential: 'openrelayproject'
+        }
+      ]
+    };
+
     /* ── SAME HASH AS PRESENTER ─────────────────────────────────────────── */
     function toPeerId(password) {
       var data = new TextEncoder().encode('openclaw-rc-v1:' + password);
@@ -369,7 +386,7 @@
 
       return new Promise(function (resolve) {
         toPeerId(password).then(function (presenterId) {
-          peer = new Peer({ debug: 0 });
+          peer = new Peer({ debug: 0, config: PEER_ICE_CONFIG });
 
           peer.on('error', function (err) {
             if (err.type === 'peer-unavailable') {

@@ -37,6 +37,23 @@
   rcBtn.textContent = 'Remote';
   document.body.appendChild(rcBtn);
 
+  /* ── ICE / TURN CONFIG ────────────────────────────────────────────────── */
+  var PEER_ICE_CONFIG = {
+    iceServers: [
+      { urls: 'stun:stun.l.google.com:19302' },
+      { urls: 'stun:stun1.l.google.com:19302' },
+      {
+        urls: [
+          'turn:openrelay.metered.ca:80',
+          'turn:openrelay.metered.ca:443',
+          'turns:openrelay.metered.ca:443'
+        ],
+        username: 'openrelayproject',
+        credential: 'openrelayproject'
+      }
+    ]
+  };
+
   /* ── STATE ────────────────────────────────────────────────────────────── */
   var peer = null;
   var connections = [];
@@ -74,6 +91,8 @@
 
   /* ── BROADCAST TO ALL REMOTES ─────────────────────────────────────────── */
   function broadcast(data) {
+    /* Prune stale entries on every broadcast so the count stays accurate */
+    connections = connections.filter(function (c) { return c.open; });
     connections.forEach(function (c) { try { c.send(data); } catch (e) {} });
   }
 
@@ -142,6 +161,8 @@
         computeExpectedResponse(nonce, password).then(function (expected) {
           if (data.response === expected) {
             clearTimeout(authTimeout);
+            /* Prune any stale (already-closed) entries first */
+            connections = connections.filter(function (c) { return c.open; });
             /* Only one device allowed at a time */
             if (connections.length >= 1) {
               try { conn.send({ type: 'full' }); conn.close(); } catch (e) {}
@@ -195,7 +216,13 @@
     updateCount();
 
     toPeerId(password).then(function (peerId) {
-      peer = new Peer(peerId, { debug: 0 });
+      peer = new Peer(peerId, { debug: 0, config: PEER_ICE_CONFIG });
+
+      peer.on('disconnected', function () {
+        /* Lost connection to signalling server — try to restore so mobiles
+           can still reach the presenter peer without restarting the session. */
+        try { peer.reconnect(); } catch (e) { console.warn('Failed to reconnect to signalling server:', e); }
+      });
 
       peer.on('error', function (err) {
         if (err.type === 'unavailable-id') {
