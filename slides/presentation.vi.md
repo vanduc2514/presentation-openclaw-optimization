@@ -536,7 +536,18 @@ Mọi người có câu hỏi hoặc muốn giao lưu kết nối
 
 Vui lòng liên hệ với mình qua:
 
-[https://github.com/vanduc2514](https://github.com/vanduc2514)
+<div style="display:flex; justify-content:center; margin-top: 10px;">
+  <div style="display:flex; gap:16px;">
+    <div style="text-align:center;">
+      <img src="images/github-qr.png" alt="GitHub QR" style="width: 180px; height: 180px; object-fit: contain; display:block;" />
+      <img src="images/github-icon.svg" alt="GitHub icon" style="width: 36px; height: 36px; margin: 8px auto 0; display:block;" />
+    </div>
+    <div style="text-align:center;">
+      <img src="images/facebook-qr.png" alt="Facebook QR" style="width: 180px; height: 180px; object-fit: contain; display:block;" />
+      <img src="images/facebook-icon.svg" alt="Facebook icon" style="width: 36px; height: 36px; margin: 8px auto 0; display:block;" />
+    </div>
+  </div>
+</div>
 
 <!-- SPEAKER NOTES
 Để lại nhiều thời gian cho phần hỏi đáp — chủ đề này luôn tạo ra những cuộc thảo luận thú vị.
