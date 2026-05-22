@@ -42,6 +42,16 @@ const REMOTE_CTRL_JS  = fs.readFileSync(path.join(SRC, 'remote-control.js'),  'u
 const REMOTE_HTML     = fs.readFileSync(path.join(SRC, 'remote.html'),        'utf8');
 
 // ─────────────────────────────────────────────────────────────────────────────
+// REMOTE BASE URL
+// Public URL used in the QR code so mobiles on ANY network can load remote.html
+// without needing access to the presenter's local machine.
+// Defaults to this repo's GitHub Pages deployment.
+// Override by setting the REMOTE_BASE_URL environment variable at build time.
+// ─────────────────────────────────────────────────────────────────────────────
+const REMOTE_BASE_URL = process.env.REMOTE_BASE_URL ||
+  'https://vanduc2514.github.io/presentation-openclaw-optimization';
+
+// ─────────────────────────────────────────────────────────────────────────────
 // FONTS
 // Replace with any Google Fonts link. Update font-family in customCss below.
 // ─────────────────────────────────────────────────────────────────────────────
@@ -423,7 +433,7 @@ function buildPresentation(input, output, langSwitcher) {
     const remoteScripts =
       '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>\n' +
       '<script src="https://unpkg.com/peerjs@1.5.4/dist/peerjs.min.js"></script>\n' +
-      `<script>\n${REMOTE_CTRL_JS}\n</script>`;
+      `<script>\nvar __REMOTE_BASE__ = ${JSON.stringify(REMOTE_BASE_URL)};\n${REMOTE_CTRL_JS}\n</script>`;
 
     const finalHtml = stripped
       .replace('<head>', `<head>\n${googleFonts}`)

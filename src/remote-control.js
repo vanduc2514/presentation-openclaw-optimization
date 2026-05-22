@@ -42,6 +42,9 @@
     iceServers: [
       { urls: 'stun:stun.l.google.com:19302' },
       { urls: 'stun:stun1.l.google.com:19302' },
+      { urls: 'stun:stun2.l.google.com:19302' },
+      { urls: 'stun:stun3.l.google.com:19302' },
+      /* Open Relay Project — free public TURN relay */
       {
         urls: [
           'turn:openrelay.metered.ca:80',
@@ -50,7 +53,10 @@
         ],
         username: 'openrelayproject',
         credential: 'openrelayproject'
-      }
+      },
+      /* freeturn.net — additional free TURN relay */
+      { urls: 'turn:freeturn.net:3478', username: 'free', credential: 'free' },
+      { urls: 'turns:freeturn.net:5349', username: 'free', credential: 'free' }
     ]
   };
 
@@ -245,12 +251,14 @@
       });
 
       peer.on('open', function () {
-        /* Build the remote URL relative to the current page — use pathname
-           only (no hash/query) so impress.js fragment routing never taints
-           the base path */
-        var base      = (window.location.origin + window.location.pathname)
-                          .replace(/\/[^\/]*$/, '/');
-        var remoteUrl = base + 'remote.html?pw=' + encodeURIComponent(password);
+        /* Build the remote URL.
+           __REMOTE_BASE__ is injected at build time (defaults to the GitHub
+           Pages deployment) so mobiles on any network can reach remote.html
+           even when the presenter is running locally.                      */
+        var remoteBase = (typeof __REMOTE_BASE__ !== 'undefined' && __REMOTE_BASE__)
+          ? __REMOTE_BASE__.replace(/\/$/, '')
+          : (window.location.origin + window.location.pathname).replace(/\/[^\/]*$/, '');
+        var remoteUrl = remoteBase + '/remote.html?pw=' + encodeURIComponent(password);
 
         /* QR code */
         var qrEl = document.getElementById('rc-qr-canvas');
