@@ -16,7 +16,7 @@
 
 ### Typography
 - **Font**: Space Grotesk (display) + Inter (body)
-- **H1**: Bold 700 weight, white to orange gradient
+- **H1**: Bold 700 weight, solid light text
 - **H2/H3**: Proper hierarchy with muted grays
 - **Body text**: Light gray `#f4f4f5` for readability on dark backgrounds
 - **Contrast**: WCAG AA compliant across all text
@@ -65,7 +65,7 @@
 - Hover: Background `#27272a`, shadow enhancement
 
 ### Slides Tested
-1. ✅ Title slide — gradient headline
+1. ✅ Title slide — solid headline
 2. ✅ Bullet point slide — list markers
 3. ✅ Data table — pricing/model comparison
 4. ✅ Code example — JSON configuration

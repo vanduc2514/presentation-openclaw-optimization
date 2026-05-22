@@ -292,7 +292,7 @@ const customCss = `
 
     /* ── PER-SLIDE OVERRIDES ────────────────────────────────────────────────
        Use #step-N to override styles for a specific slide (1-indexed).
-       Slide 1: dark title card with orange gradient heading.             */
+       Slide 1: dark title card with solid headline color.                */
     #step-1 {
       background: #0f0f13;
       border-color: var(--accent-deep);
@@ -303,10 +303,7 @@ const customCss = `
       font-weight: 700;
       letter-spacing: -0.04em;
       line-height: 1.08;
-      background: linear-gradient(135deg, #e4e4e7 20%, var(--accent) 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
+      color: var(--ink);
     }
 
     #step-1 h2 {
