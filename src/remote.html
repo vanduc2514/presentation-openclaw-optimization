@@ -121,6 +121,19 @@
       background: var(--surface);
       border-bottom: 1px solid var(--border);
     }
+    #slide-meta {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 0.9rem;
+    }
+    .slide-meta-block {
+      min-width: 0;
+      flex: 1 1 0;
+    }
+    .slide-meta-block.next {
+      text-align: right;
+    }
     #slide-progress {
       font-size: 0.68rem;
       color: var(--muted);
@@ -131,6 +144,20 @@
     #slide-title {
       font-size: 0.97rem;
       font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .slide-meta-label {
+      font-size: 0.64rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      margin-bottom: 0.22rem;
+    }
+    #next-slide-title {
+      font-size: 0.84rem;
+      color: var(--sub);
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -240,7 +267,15 @@
   <div id="control-screen" style="display:none">
     <div id="slide-header">
       <div id="slide-progress">Slide &mdash; / &mdash;</div>
-      <div id="slide-title">Connecting&hellip;</div>
+      <div id="slide-meta">
+        <div class="slide-meta-block current">
+          <div id="slide-title">Connecting&hellip;</div>
+        </div>
+        <div class="slide-meta-block next">
+          <div class="slide-meta-label">Next</div>
+          <div id="next-slide-title">&mdash;</div>
+        </div>
+      </div>
     </div>
 
     <div id="progress-bar">
@@ -295,6 +330,7 @@
     var controlScreen      = document.getElementById('control-screen');
     var slideProgress      = document.getElementById('slide-progress');
     var slideTitle         = document.getElementById('slide-title');
+    var nextSlideTitle     = document.getElementById('next-slide-title');
     var notesArea          = document.getElementById('notes-area');
     var progressFill       = document.getElementById('progress-fill');
     var prevBtn            = document.getElementById('prev-btn');
@@ -327,6 +363,7 @@
     function updateSlide(data) {
       slideProgress.textContent = 'Slide ' + data.index + ' / ' + data.total;
       slideTitle.textContent    = data.title || '(no title)';
+      nextSlideTitle.textContent = data.nextTitle || '(no title)';
       progressFill.style.width  = ((data.index / data.total) * 100) + '%';
 
       if (data.notes && data.notes.trim()) {
@@ -343,8 +380,8 @@
         notesArea.classList.add('empty');
       }
 
-      prevBtn.disabled = data.index <= 1;
-      nextBtn.disabled = data.index >= data.total;
+      prevBtn.disabled = data.total <= 1;
+      nextBtn.disabled = data.total <= 1;
       notesArea.scrollTop = 0;
     }
 

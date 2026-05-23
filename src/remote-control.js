@@ -76,15 +76,20 @@
     var steps = Array.from(document.querySelectorAll('.step'));
     var active = document.querySelector('.step.active');
     if (!active) return null;
+    var activeIndex = steps.indexOf(active);
+    var nextStep = steps[(activeIndex + 1) % steps.length];
     var titleEl = active.querySelector('h1, h2, h3');
+    var nextTitleEl = nextStep ? nextStep.querySelector('h1, h2, h3') : null;
     var notes = notesMap[active.id] || '';
     if (notes.length > MAX_NOTES) notes = notes.slice(0, MAX_NOTES) + '\u2026';
     return {
       type:  'slide',
       id:    active.id,
-      index: steps.indexOf(active) + 1,
+      index: activeIndex + 1,
       total: steps.length,
       title: titleEl ? titleEl.textContent.trim() : '',
+      nextTitle: nextTitleEl ? nextTitleEl.textContent.trim() : '',
+      nextStepId: nextStep ? nextStep.id : null,
       notes: notes
     };
   }
@@ -174,7 +179,11 @@
         if (data.type === 'cmd') {
           var api = window.impress && window.impress();
           if (!api) return;
-          if      (data.cmd === 'next')              api.next();
+          if (data.cmd === 'next') {
+            var info = currentSlideInfo();
+            if (info && info.index >= info.total && info.nextStepId) api.goto(info.nextStepId);
+            else api.next();
+          }
           else if (data.cmd === 'prev')              api.prev();
           else if (data.cmd === 'goto' && data.step) api.goto(data.step);
         }
