@@ -121,19 +121,6 @@
       background: var(--surface);
       border-bottom: 1px solid var(--border);
     }
-    #slide-meta {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 0.9rem;
-    }
-    .slide-meta-block {
-      min-width: 0;
-      flex: 1 1 0;
-    }
-    .slide-meta-block.next {
-      text-align: right;
-    }
     #slide-progress {
       font-size: 0.68rem;
       color: var(--muted);
@@ -148,16 +135,27 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .slide-meta-label {
+
+    /* Next slide preview (separate from notes to avoid visual confusion) */
+    #next-slide-panel {
+      flex-shrink: 0;
+      padding: 0.72rem 1.2rem 0.78rem;
+      background: rgba(79, 70, 229, 0.12);
+      border-top: 1px solid rgba(79, 70, 229, 0.34);
+      border-bottom: 1px solid rgba(79, 70, 229, 0.34);
+    }
+    #next-slide-label {
       font-size: 0.64rem;
-      color: var(--muted);
+      color: #c4b5fd;
       text-transform: uppercase;
-      letter-spacing: 0.1em;
+      letter-spacing: 0.12em;
       margin-bottom: 0.22rem;
+      font-weight: 600;
     }
     #next-slide-title {
-      font-size: 0.84rem;
-      color: var(--sub);
+      font-size: 0.9rem;
+      color: var(--text);
+      font-weight: 500;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -267,15 +265,7 @@
   <div id="control-screen" style="display:none">
     <div id="slide-header">
       <div id="slide-progress">Slide &mdash; / &mdash;</div>
-      <div id="slide-meta">
-        <div class="slide-meta-block current">
-          <div id="slide-title">Connecting&hellip;</div>
-        </div>
-        <div class="slide-meta-block next">
-          <div class="slide-meta-label">Next</div>
-          <div id="next-slide-title">&mdash;</div>
-        </div>
-      </div>
+      <div id="slide-title">Connecting&hellip;</div>
     </div>
 
     <div id="progress-bar">
@@ -283,6 +273,11 @@
     </div>
 
     <div id="notes-area" class="empty">No speaker notes for this slide.</div>
+
+    <div id="next-slide-panel">
+      <div id="next-slide-label">Up next</div>
+      <div id="next-slide-title">&mdash;</div>
+    </div>
 
     <div id="nav-bar">
       <button id="prev-btn" class="nav-btn" disabled>
