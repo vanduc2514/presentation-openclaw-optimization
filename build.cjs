@@ -42,6 +42,19 @@ const REMOTE_CTRL_JS  = fs.readFileSync(path.join(SRC, 'remote-control.js'),  'u
 const REMOTE_HTML     = fs.readFileSync(path.join(SRC, 'remote.html'),        'utf8');
 
 // ─────────────────────────────────────────────────────────────────────────────
+// GOOGLE TAG MANAGER (GA4)
+// ─────────────────────────────────────────────────────────────────────────────
+const GTM_SCRIPT = `
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-R8QY6LDP67"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-R8QY6LDP67');
+  </script>
+`;
+
+// ─────────────────────────────────────────────────────────────────────────────
 // REMOTE BASE URL
 // Public URL used in the QR code so mobiles on ANY network can load remote.html
 // without needing access to the presenter's local machine.
@@ -558,7 +571,7 @@ function buildPresentation(input, output, langSwitcher) {
       `<script>\nvar __REMOTE_BASE__ = ${JSON.stringify(REMOTE_BASE_URL)};\n${REMOTE_CTRL_JS}\n</script>`;
 
     const finalHtml = stripped
-      .replace('<head>', `<head>\n${googleFonts}`)
+      .replace('<head>', `<head>\n${GTM_SCRIPT}\n${googleFonts}`)
       .replace('</head>', `${customCss}\n<style id="rc-styles">\n${REMOTE_CTRL_CSS}\n</style>\n</head>`)
       .replace('</body>', `${langSwitcher}\n${remoteScripts}\n</body>`);
 
