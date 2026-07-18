@@ -558,8 +558,8 @@ Please reach out at:
 
 | GitHub | Facebook | Website |
 |---|---|---|
-| ![GitHub QR](images/github-qr.png) | ![Facebook QR](images/facebook-qr.png) | ![Website QR](images/nvduc-qr.png) |
-| ![GitHub icon](images/github-icon.svg) | ![Facebook icon](images/facebook-icon.svg) | ![Website icon](images/website-icon.svg) |
+| ![GitHub QR](images/github-qr.png) | ![Website QR](images/nvduc-qr.png) |
+| ![GitHub icon](images/github-icon.svg) | ![Website icon](images/website-icon.svg) |
 
 <!-- SPEAKER NOTES
 Leave plenty of time for questions — this topic always generates good discussion.
