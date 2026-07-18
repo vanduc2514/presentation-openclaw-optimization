@@ -571,8 +571,8 @@ Mọi người có câu hỏi hoặc muốn giao lưu kết nối
 
 Vui lòng liên hệ với mình qua:
 
-| GitHub | Facebook | Website |
-|---|---|---|
+| GitHub | Website |
+|---|---|
 | ![GitHub QR](images/github-qr.png) | ![Website QR](images/nvduc-qr.png) |
 | ![GitHub icon](images/github-icon.svg) | ![Website icon](images/website-icon.svg) |
 
