@@ -556,8 +556,8 @@ Any questions or just want to connect?
 
 Please reach out at:
 
-| GitHub | Facebook | Website |
-|---|---|---|
+| GitHub | Website |
+|---|---|
 | ![GitHub QR](images/github-qr.png) | ![Website QR](images/nvduc-qr.png) |
 | ![GitHub icon](images/github-icon.svg) | ![Website icon](images/website-icon.svg) |
 
